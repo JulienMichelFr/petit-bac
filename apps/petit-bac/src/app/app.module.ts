@@ -12,6 +12,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RoomModule } from './modules/room/room.module';
 import { RoomPageComponent } from './pages/room-page/room-page.component';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
+import { profileReducer } from './store/reducers/profile.reducer';
+import { HasProfileGuard } from './guards/has-profile/has-profile.guard';
+import { RoomInvitePageComponent } from './pages/room-invite-page/room-invite-page.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -19,6 +26,7 @@ import { RoomPageComponent } from './pages/room-page/room-page.component';
     HomePageComponent,
     NotFoundPageComponent,
     RoomPageComponent,
+    RoomInvitePageComponent,
   ],
   imports: [
     BrowserModule,
@@ -27,10 +35,29 @@ import { RoomPageComponent } from './pages/room-page/room-page.component';
     UserModule,
     AppRoutingModuleModule,
     RoomModule,
+    StoreModule.forRoot(
+      {
+        profile: profileReducer,
+      },
+      {
+        runtimeChecks: {
+          strictStateImmutability: true,
+          strictActionImmutability: true,
+          strictStateSerializability: true,
+          strictActionSerializability: true,
+          strictActionWithinNgZone: true,
+          strictActionTypeUniqueness: true,
+        },
+      }
+    ),
+    environment.production
+      ? undefined
+      : StoreDevtoolsModule.instrument({ maxAge: 25 }),
     MatCardModule,
     MatButtonModule,
+    MatSnackBarModule,
   ],
-  providers: [],
+  providers: [HasProfileGuard],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

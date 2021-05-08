@@ -1,0 +1,15 @@
+<mat-card>
+  <mat-card-content>
+    <petit-bac-user-form
+      (formChange)="updateUser($event)"
+    ></petit-bac-user-form>
+    <button
+      (click)="joinRoom()"
+      [disabled]="!user.username.length"
+      color="primary"
+      mat-raised-button
+    >
+      Join
+    </button>
+  </mat-card-content>
+</mat-card>
