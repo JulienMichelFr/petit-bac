@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RoomInterface } from '../../../../../../../../libs/api-interfaces/src/lib/room.interface';
+import { RoomInterface } from '@petit-bac/api-interfaces';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable()

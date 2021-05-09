@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { UserInterface } from '@petit-bac/api-interfaces';
+import { RoomInterface, UserInterface } from '@petit-bac/api-interfaces';
 import { RoomService } from '../../modules/room/service/room/room.service';
-import { RoomInterface } from '../../../../../../libs/api-interfaces/src/lib/room.interface';
 import { Router } from '@angular/router';
 import { AppStateInterface } from '../../interfaces/app-state.interface';
 import { Store } from '@ngrx/store';

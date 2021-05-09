@@ -1,5 +1,5 @@
 import { Controller, Post } from '@nestjs/common';
-import { RoomInterface } from '../../../../../../libs/api-interfaces/src/lib/room.interface';
+import { RoomInterface } from '@petit-bac/api-interfaces';
 import { randomBytes } from 'crypto';
 
 @Controller('rooms')
