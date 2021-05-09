@@ -19,6 +19,7 @@ import { profileReducer } from './store/reducers/profile.reducer';
 import { HasProfileGuard } from './guards/has-profile/has-profile.guard';
 import { RoomInvitePageComponent } from './pages/room-invite-page/room-invite-page.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { RoomExistGuard } from './guards/room-exist/room-exist.guard';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatButtonModule,
     MatSnackBarModule,
   ],
-  providers: [HasProfileGuard],
+  providers: [HasProfileGuard, RoomExistGuard],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

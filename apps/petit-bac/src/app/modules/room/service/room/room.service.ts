@@ -10,4 +10,8 @@ export class RoomService {
   createRoom(): Observable<RoomInterface> {
     return this.http.post<RoomInterface>('/api/rooms', {});
   }
+
+  findRoom(roomId: string): Observable<RoomInterface> {
+    return this.http.get<RoomInterface>(`/api/rooms/${roomId}`);
+  }
 }

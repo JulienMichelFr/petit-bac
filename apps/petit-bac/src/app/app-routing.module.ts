@@ -5,17 +5,19 @@ import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.com
 import { RoomPageComponent } from './pages/room-page/room-page.component';
 import { HasProfileGuard } from './guards/has-profile/has-profile.guard';
 import { RoomInvitePageComponent } from './pages/room-invite-page/room-invite-page.component';
+import { RoomExistGuard } from './guards/room-exist/room-exist.guard';
 
 const Routes: Routes = [
   { path: '', component: HomePageComponent },
   {
     path: 'rooms/:id',
     component: RoomPageComponent,
-    canActivate: [HasProfileGuard],
+    canActivate: [RoomExistGuard, HasProfileGuard],
   },
   {
     path: 'rooms/:id/invite',
     component: RoomInvitePageComponent,
+    canActivate: [RoomExistGuard],
   },
   { path: '**', component: NotFoundPageComponent },
 ];
