@@ -9,8 +9,8 @@ import { Store } from '@ngrx/store';
 import { selectProfile } from '../../store/selectors/profile.selectors';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { ProfileState } from '../../store/reducers/profile.reducer';
 import { Injectable } from '@angular/core';
+import { PlayerInterface } from '@petit-bac/api-interfaces';
 
 @Injectable()
 export class HasProfileGuard implements CanActivate {
@@ -28,8 +28,8 @@ export class HasProfileGuard implements CanActivate {
     | UrlTree {
     return this.store.select(selectProfile).pipe(
       take(1),
-      map((profile: ProfileState) => {
-        if (profile?.user?.username) {
+      map((profile: PlayerInterface) => {
+        if (profile?.username) {
           return true;
         }
         const url = '/' + route.url.join('/') + '/invite';

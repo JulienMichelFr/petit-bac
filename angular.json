@@ -41,6 +41,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": ["socket.io-client"],
             "outputPath": "dist/apps/petit-bac",
             "index": "apps/petit-bac/src/index.html",
             "main": "apps/petit-bac/src/main.ts",

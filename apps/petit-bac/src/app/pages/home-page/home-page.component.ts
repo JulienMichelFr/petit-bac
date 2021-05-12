@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RoomInterface, UserInterface } from '@petit-bac/api-interfaces';
+import { PlayerInterface, RoomInterface } from '@petit-bac/api-interfaces';
 import { RoomService } from '../../modules/room/service/room/room.service';
 import { Router } from '@angular/router';
 import { AppStateInterface } from '../../interfaces/app-state.interface';
@@ -12,16 +12,16 @@ import { setProfile } from '../../store/actions/profile.actions';
   styleUrls: ['./home-page.component.scss'],
 })
 export class HomePageComponent {
-  user: UserInterface = { username: '' };
+  player: PlayerInterface = { username: '' };
   constructor(
     private roomService: RoomService,
     private router: Router,
     private store: Store<AppStateInterface>
   ) {}
 
-  updateUser(user: UserInterface): void {
-    this.user = user;
-    this.store.dispatch(setProfile({ user: user }));
+  updateUser(player: PlayerInterface): void {
+    this.player = player;
+    this.store.dispatch(setProfile({ profile: player }));
   }
 
   createRoom() {

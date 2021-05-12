@@ -1,19 +1,12 @@
 import { createReducer, on } from '@ngrx/store';
 import { setProfile } from '../actions/profile.actions';
-import { UserInterface } from '@petit-bac/api-interfaces';
+import { PlayerInterface } from '@petit-bac/api-interfaces';
 
-export interface ProfileState {
-  user?: UserInterface;
-}
-
-export const initialState: ProfileState = {};
+export const initialState: Partial<PlayerInterface> = {};
 
 export const profileReducer = createReducer(
   initialState,
-  on(setProfile, (state, action) => {
-    return {
-      ...state,
-      user: action.user,
-    };
+  on(setProfile, (state, { profile }) => {
+    return profile;
   })
 );

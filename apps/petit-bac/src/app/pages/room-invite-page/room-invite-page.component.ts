@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { UserInterface } from '@petit-bac/api-interfaces';
+import { PlayerInterface } from '@petit-bac/api-interfaces';
 import { Store } from '@ngrx/store';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppStateInterface } from '../../interfaces/app-state.interface';
@@ -11,7 +11,7 @@ import { setProfile } from '../../store/actions/profile.actions';
   styleUrls: ['./room-invite-page.component.scss'],
 })
 export class RoomInvitePageComponent {
-  user: UserInterface = { username: '' };
+  player: PlayerInterface = { username: '' };
 
   constructor(
     private store: Store<AppStateInterface>,
@@ -19,13 +19,12 @@ export class RoomInvitePageComponent {
     private route: ActivatedRoute
   ) {}
 
-  updateUser(user: UserInterface) {
-    this.user = user;
-    this.store.dispatch(setProfile({ user }));
+  updateUser(player: PlayerInterface) {
+    this.player = player;
+    this.store.dispatch(setProfile({ profile: player }));
   }
 
   joinRoom() {
-    console.log('called');
     this.router.navigate(['../'], { relativeTo: this.route }).catch((err) => {
       console.error(err);
     });

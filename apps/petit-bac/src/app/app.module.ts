@@ -20,6 +20,12 @@ import { HasProfileGuard } from './guards/has-profile/has-profile.guard';
 import { RoomInvitePageComponent } from './pages/room-invite-page/room-invite-page.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RoomExistGuard } from './guards/room-exist/room-exist.guard';
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+import { EffectsModule } from '@ngrx/effects';
+import { AppEffects } from './store/effects';
+import { metaReducers } from './store/meta-reducers';
+
+const config: SocketIoConfig = { url: 'http://localhost:3333', options: {} };
 
 @NgModule({
   declarations: [
@@ -35,12 +41,14 @@ import { RoomExistGuard } from './guards/room-exist/room-exist.guard';
     HttpClientModule,
     UserModule,
     AppRoutingModuleModule,
+    SocketIoModule.forRoot(config),
     RoomModule,
     StoreModule.forRoot(
       {
         profile: profileReducer,
       },
       {
+        metaReducers,
         runtimeChecks: {
           strictStateImmutability: true,
           strictActionImmutability: true,
@@ -51,6 +59,7 @@ import { RoomExistGuard } from './guards/room-exist/room-exist.guard';
         },
       }
     ),
+    EffectsModule.forRoot(AppEffects),
     environment.production
       ? undefined
       : StoreDevtoolsModule.instrument({ maxAge: 25 }),

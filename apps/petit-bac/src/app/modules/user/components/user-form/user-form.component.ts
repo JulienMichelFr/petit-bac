@@ -6,7 +6,7 @@ import {
   Output,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@ngneat/reactive-forms';
-import { UserInterface } from '@petit-bac/api-interfaces';
+import { PlayerInterface } from '@petit-bac/api-interfaces';
 import { Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
@@ -16,8 +16,8 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./user-form.component.scss'],
 })
 export class UserFormComponent implements OnDestroy, OnInit {
-  @Output() formChange = new EventEmitter<UserInterface>();
-  form: FormGroup<UserInterface> = new FormGroup<UserInterface>({
+  @Output() formChange = new EventEmitter<PlayerInterface>();
+  form: FormGroup<PlayerInterface> = new FormGroup<PlayerInterface>({
     username: new FormControl<string>('', [
       Validators.required,
       Validators.minLength(2),

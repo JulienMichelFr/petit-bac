@@ -1,5 +1,5 @@
-import { UserInterface } from '@petit-bac/api-interfaces';
+import { PlayerInterface } from '@petit-bac/api-interfaces';
 
 export interface AppStateInterface {
-  profile?: UserInterface;
+  profile?: PlayerInterface;
 }

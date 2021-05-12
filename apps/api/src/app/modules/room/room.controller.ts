@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  NotFoundException,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { Controller, Get, Param, Post } from '@nestjs/common';
 import { RoomInterface } from '@petit-bac/api-interfaces';
 import { RoomService } from './room.service';
 
@@ -18,17 +12,12 @@ export class RoomController {
 
     return {
       id: roomId,
+      players: [],
     };
   }
 
   @Get(':id')
   async findRoom(@Param('id') roomId: string): Promise<RoomInterface> {
-    const roomExist = this.roomService.roomExist(roomId);
-    if (!roomExist) {
-      throw new NotFoundException();
-    }
-    return {
-      id: roomId,
-    };
+    return this.roomService.getRoom(roomId);
   }
 }

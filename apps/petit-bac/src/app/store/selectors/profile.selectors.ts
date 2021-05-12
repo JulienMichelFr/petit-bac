@@ -1,8 +1,8 @@
 import { createFeatureSelector } from '@ngrx/store';
 import { AppStateInterface } from '../../interfaces/app-state.interface';
-import { ProfileState } from '../reducers/profile.reducer';
+import { PlayerInterface } from '@petit-bac/api-interfaces';
 
 export const selectProfile = createFeatureSelector<
   AppStateInterface,
-  ProfileState
+  PlayerInterface
 >('profile');
