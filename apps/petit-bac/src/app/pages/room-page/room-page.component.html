@@ -1,9 +1,21 @@
 <div class="sidebar">
-  <petit-bac-user-list [players]="players$ | async"></petit-bac-user-list>
+  <mat-card>
+    <mat-card-title>Players</mat-card-title>
+    <mat-card-content>
+      <petit-bac-user-list [players]="players$ | async"></petit-bac-user-list>
+    </mat-card-content>
+  </mat-card>
 </div>
 <div class="container">
   <button (click)="copyLink()" color="primary" mat-raised-button>
     Copy link
   </button>
-  <petit-bac-chat></petit-bac-chat>
+</div>
+<div class="sidebar">
+  <mat-card>
+    <mat-card-title>Chat</mat-card-title>
+    <mat-card-content>
+      <petit-bac-chat></petit-bac-chat>
+    </mat-card-content>
+  </mat-card>
 </div>

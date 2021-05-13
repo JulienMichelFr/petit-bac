@@ -2,10 +2,16 @@
   display: flex;
   flex-flow: row nowrap;
   gap: 10px;
+  padding: 10px;
+}
+
+mat-card-title {
+  text-align: center;
+  color: var(--primary-color);
 }
 
 .sidebar {
-  width: 30%;
+  width: 20%;
 }
 .container {
   flex: 1 1 auto;
