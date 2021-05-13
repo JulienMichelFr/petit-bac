@@ -1,14 +1,8 @@
 import { Component } from '@angular/core';
-import {
-  RoomPlayerChatDispatchMessage,
-  RoomPlayerChatMessage,
-  WsMessagesName,
-} from '@petit-bac/ws-shared';
-import { ActivatedRoute } from '@angular/router';
+import { RoomPlayerChatDispatchMessage } from '@petit-bac/ws-shared';
 import { PlayerChatForm } from '../../components/chat-input/chat-input.component';
 import { Observable } from 'rxjs';
-import { scan } from 'rxjs/operators';
-import { Socket } from 'ngx-socket-io';
+import { ChatService } from '../../services/chat/chat.service';
 
 @Component({
   selector: 'petit-bac-chat',
@@ -16,27 +10,12 @@ import { Socket } from 'ngx-socket-io';
   styleUrls: ['./chat.component.scss'],
 })
 export class ChatComponent {
-  roomId = this.route.snapshot.paramMap.get('id');
-  actions$: Observable<
-    RoomPlayerChatDispatchMessage[]
-  > = this.socket
-    .fromEvent<RoomPlayerChatDispatchMessage>(WsMessagesName.ROOM_PLAYER_ACTION)
-    .pipe(
-      scan(
-        (
-          acc: RoomPlayerChatDispatchMessage[],
-          message: RoomPlayerChatDispatchMessage
-        ) => {
-          return [...acc, message];
-        },
-        []
-      )
-    );
+  messages$: Observable<RoomPlayerChatDispatchMessage[]> = this.chatService
+    .messages$;
 
-  constructor(private socket: Socket, private route: ActivatedRoute) {}
+  constructor(private chatService: ChatService) {}
 
-  sendAction(action: PlayerChatForm): void {
-    const message: RoomPlayerChatMessage = { ...action, roomId: this.roomId };
-    this.socket.emit(WsMessagesName.ROOM_PLAYER_ACTION, message);
+  sendAction(messageForm: PlayerChatForm): void {
+    this.chatService.sendMessage(messageForm).subscribe();
   }
 }

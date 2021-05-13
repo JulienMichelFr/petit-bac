@@ -41,7 +41,7 @@ export class RoomGateway implements OnGatewayDisconnect {
     this.server.to(roomId).emit(WsMessagesName.ROOM_UPDATE_PLAYERS, response);
   }
 
-  @SubscribeMessage(WsMessagesName.ROOM_PLAYER_ACTION)
+  @SubscribeMessage(WsMessagesName.ROOM_PLAYER_CHAT)
   playerAction(
     @MessageBody() message: RoomPlayerChatMessage,
     @ConnectedSocket() socket: Socket
@@ -52,7 +52,7 @@ export class RoomGateway implements OnGatewayDisconnect {
     };
     this.server
       .to(message.roomId)
-      .emit(WsMessagesName.ROOM_PLAYER_ACTION, response);
+      .emit(WsMessagesName.ROOM_PLAYER_CHAT, response);
   }
 
   handleDisconnect(client: Socket): void {

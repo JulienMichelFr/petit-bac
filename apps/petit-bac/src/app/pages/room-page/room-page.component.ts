@@ -46,7 +46,7 @@ export class RoomPageComponent implements OnInit {
 
   copyLink() {
     this.clipboard.copy(this.link);
-    this.snackbarService.open('Link copied !');
+    this.snackbarService.open('Link copied !', null, { duration: 3000 });
   }
 
   private connectToRoom(): void {

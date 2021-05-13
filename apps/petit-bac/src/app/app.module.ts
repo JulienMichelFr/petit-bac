@@ -25,6 +25,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { AppEffects } from './store/effects';
 import { metaReducers } from './store/meta-reducers';
 import { ChatModule } from './modules/chat/chat.module';
+import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 
 const config: SocketIoConfig = { url: 'http://localhost:3333', options: {} };
 
@@ -48,6 +49,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3333', options: {} };
     StoreModule.forRoot(
       {
         profile: profileReducer,
+        router: routerReducer,
       },
       {
         metaReducers,
@@ -61,6 +63,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3333', options: {} };
         },
       }
     ),
+    StoreRouterConnectingModule.forRoot(),
     EffectsModule.forRoot(AppEffects),
     environment.production
       ? undefined
