@@ -6,11 +6,10 @@ import {
 } from '@angular/router';
 import { AppStateInterface } from '../../interfaces/app-state.interface';
 import { Store } from '@ngrx/store';
-import { selectProfile } from '../../store/selectors/profile.selectors';
+import { hasProfile } from '../../store/selectors/profile.selectors';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { PlayerInterface } from '@petit-bac/api-interfaces';
 
 @Injectable()
 export class HasProfileGuard implements CanActivate {
@@ -26,10 +25,10 @@ export class HasProfileGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    return this.store.select(selectProfile).pipe(
+    return this.store.select(hasProfile).pipe(
       take(1),
-      map((profile: PlayerInterface) => {
-        if (profile?.username) {
+      map((hasProfile: boolean) => {
+        if (hasProfile) {
           return true;
         }
         const url = '/' + route.url.join('/') + '/invite';

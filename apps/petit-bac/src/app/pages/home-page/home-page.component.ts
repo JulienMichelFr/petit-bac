@@ -5,6 +5,9 @@ import { Router } from '@angular/router';
 import { AppStateInterface } from '../../interfaces/app-state.interface';
 import { Store } from '@ngrx/store';
 import { setProfile } from '../../store/actions/profile.actions';
+import { Observable } from 'rxjs';
+import { hasProfile } from '../../store/selectors/profile.selectors';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'petit-bac-home-page',
@@ -13,6 +16,10 @@ import { setProfile } from '../../store/actions/profile.actions';
 })
 export class HomePageComponent {
   player: PlayerInterface = { username: '' };
+  joinDisabled$: Observable<boolean> = this.store
+    .select(hasProfile)
+    .pipe(map((hasProfile) => !hasProfile));
+
   constructor(
     private roomService: RoomService,
     private router: Router,

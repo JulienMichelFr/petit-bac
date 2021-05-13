@@ -1,0 +1,12 @@
+:host {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 10px;
+}
+
+.sidebar {
+  width: 30%;
+}
+.container {
+  flex: 1 1 auto;
+}

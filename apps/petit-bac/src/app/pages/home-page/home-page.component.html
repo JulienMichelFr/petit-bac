@@ -5,7 +5,7 @@
     ></petit-bac-user-form>
     <button
       (click)="createRoom()"
-      [disabled]="!player.username.length"
+      [disabled]="joinDisabled$ | async"
       color="primary"
       mat-raised-button
     >

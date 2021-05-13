@@ -11,8 +11,9 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { AppStateInterface } from '../../interfaces/app-state.interface';
 import { Store } from '@ngrx/store';
-import { map } from 'rxjs/operators';
+import { map, skipWhile, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { hasProfile } from '../../store/selectors/profile.selectors';
 
 @Component({
   selector: 'petit-bac-room-page',
@@ -41,7 +42,6 @@ export class RoomPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.connectToRoom();
-    this.players$.subscribe(console.log, console.error);
   }
 
   copyLink() {
@@ -50,10 +50,18 @@ export class RoomPageComponent implements OnInit {
   }
 
   private connectToRoom(): void {
-    const message: RoomJoinMessage = {
-      roomId: this.roomId,
-    };
-    this.socket.emit(WsMessagesName.ROOMS_JOIN, message);
-    this.connected = true;
+    this.store
+      .select(hasProfile)
+      .pipe(
+        skipWhile((hasProfile) => !hasProfile),
+        take(1)
+      )
+      .subscribe(() => {
+        const message: RoomJoinMessage = {
+          roomId: this.roomId,
+        };
+        this.socket.emit(WsMessagesName.ROOMS_JOIN, message);
+        this.connected = true;
+      });
   }
 }

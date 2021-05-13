@@ -1,6 +1,9 @@
-<p>room-page works!</p>
-<button (click)="copyLink()" color="primary" mat-raised-button>
-  Copy link
-</button>
-
-<pre><code>{{players$ | async | json}}</code></pre>
+<div class="sidebar">
+  <petit-bac-user-list [players]="players$ | async"></petit-bac-user-list>
+</div>
+<div class="container">
+  <p>room-page works!</p>
+  <button (click)="copyLink()" color="primary" mat-raised-button>
+    Copy link
+  </button>
+</div>

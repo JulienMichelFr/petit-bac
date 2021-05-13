@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  align-items: flex-start;
+  flex-flow: column nowrap;
+  gap: 10px;
+  padding: 5px;
+}
+
+.user-container {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  font-weight: 500;
+  width: auto;
+
+  padding: 5px 10px;
+  border-radius: 5px;
+
+  user-select: none;
+}
