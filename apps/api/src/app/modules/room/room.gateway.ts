@@ -11,7 +11,8 @@ import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import {
   RoomJoinMessage,
-  RoomPlayerActionMessage,
+  RoomPlayerChatDispatchMessage,
+  RoomPlayerChatMessage,
   RoomUpdatePlayersMessage,
   WsMessagesName,
 } from '@petit-bac/ws-shared';
@@ -41,8 +42,17 @@ export class RoomGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_PLAYER_ACTION)
-  playerAction(@MessageBody() message: RoomPlayerActionMessage): void {
-    this.logger.log(message.action);
+  playerAction(
+    @MessageBody() message: RoomPlayerChatMessage,
+    @ConnectedSocket() socket: Socket
+  ): void {
+    const response: RoomPlayerChatDispatchMessage = {
+      message: message.message,
+      player: socket.data,
+    };
+    this.server
+      .to(message.roomId)
+      .emit(WsMessagesName.ROOM_PLAYER_ACTION, response);
   }
 
   handleDisconnect(client: Socket): void {

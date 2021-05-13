@@ -1,0 +1,8 @@
+<form (ngSubmit)="submit()" [formGroup]="form">
+  <mat-form-field>
+    <input formControlName="message" matInput type="text" />
+  </mat-form-field>
+  <button [disabled]="form.invalid" mat-raised-button type="submit">
+    Send
+  </button>
+</form>

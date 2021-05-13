@@ -24,6 +24,7 @@ import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { EffectsModule } from '@ngrx/effects';
 import { AppEffects } from './store/effects';
 import { metaReducers } from './store/meta-reducers';
+import { ChatModule } from './modules/chat/chat.module';
 
 const config: SocketIoConfig = { url: 'http://localhost:3333', options: {} };
 
@@ -43,6 +44,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3333', options: {} };
     AppRoutingModuleModule,
     SocketIoModule.forRoot(config),
     RoomModule,
+    ChatModule,
     StoreModule.forRoot(
       {
         profile: profileReducer,

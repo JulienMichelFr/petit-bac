@@ -11,6 +11,11 @@ export interface RoomMessage {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface RoomJoinMessage extends RoomMessage {}
 
-export interface RoomPlayerActionMessage extends RoomMessage {
-  action: string;
+export interface RoomPlayerChatMessage extends RoomMessage {
+  message: string;
+}
+
+export interface RoomPlayerChatDispatchMessage
+  extends Pick<RoomPlayerChatMessage, 'message'> {
+  player: PlayerInterface;
 }
