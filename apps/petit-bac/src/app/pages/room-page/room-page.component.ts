@@ -1,19 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Socket } from 'ngx-socket-io';
 import { PlayerInterface } from '@petit-bac/api-interfaces';
-import { ActivatedRoute } from '@angular/router';
 import { AppStateInterface } from '../../interfaces/app-state.interface';
 import { Store } from '@ngrx/store';
-import { map, skipWhile, take } from 'rxjs/operators';
+import { map, skipWhile, switchMap, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { hasProfile } from '../../store/selectors/profile.selectors';
-import {
-  RoomJoinMessage,
-  RoomUpdatePlayersMessage,
-  WsMessagesName,
-} from '@petit-bac/ws-shared';
+import { RoomUpdatePlayersMessage, WsMessagesName } from '@petit-bac/ws-shared';
+import { SocketService } from '../../service/socket/socket.service';
 
 @Component({
   selector: 'petit-bac-room-page',
@@ -24,18 +19,16 @@ export class RoomPageComponent implements OnInit {
   link: string;
   players$: Observable<
     PlayerInterface[]
-  > = this.socket
+  > = this.socketService
     .fromEvent<RoomUpdatePlayersMessage>(WsMessagesName.ROOM_UPDATE_PLAYERS)
     .pipe(map((message) => message.players));
   connected = false;
-  roomId: string = this.route.snapshot.paramMap.get('id');
 
   constructor(
     private store: Store<AppStateInterface>,
     private clipboard: Clipboard,
     private snackbarService: MatSnackBar,
-    private socket: Socket,
-    private route: ActivatedRoute
+    private socketService: SocketService
   ) {
     this.link = window.location.href + '/invite';
   }
@@ -54,13 +47,15 @@ export class RoomPageComponent implements OnInit {
       .select(hasProfile)
       .pipe(
         skipWhile((hasProfile) => !hasProfile),
-        take(1)
+        take(1),
+        switchMap(() => {
+          return this.socketService.sendRoomMessage(
+            WsMessagesName.ROOM_JOIN,
+            {}
+          );
+        })
       )
       .subscribe(() => {
-        const message: RoomJoinMessage = {
-          roomId: this.roomId,
-        };
-        this.socket.emit(WsMessagesName.ROOM_JOIN, message);
         this.connected = true;
       });
   }

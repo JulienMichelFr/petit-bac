@@ -7,7 +7,7 @@ export class RoomService {
   private rooms: Map<string, RoomInterface> = new Map<string, RoomInterface>();
 
   private static createRoomId(): string {
-    return randomBytes(20).toString('hex');
+    return randomBytes(20).toString('hex').toUpperCase().substring(0, 5);
   }
 
   roomExist(roomId: string): boolean {

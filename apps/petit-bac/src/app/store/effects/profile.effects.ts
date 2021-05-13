@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
-import { Socket } from 'ngx-socket-io';
 import { setProfile } from '../actions/profile.actions';
 import { tap } from 'rxjs/operators';
 import { AppStateInterface } from '../../interfaces/app-state.interface';
 import { Store } from '@ngrx/store';
 import { selectProfile } from '../selectors/profile.selectors';
 import { PlayerUpdateMessage, WsMessagesName } from '@petit-bac/ws-shared';
+import { SocketService } from '../../service/socket/socket.service';
 
 @Injectable()
 export class ProfileEffects {
@@ -18,7 +18,7 @@ export class ProfileEffects {
         tap(([, profile]) => {
           if (profile?.username) {
             const message: PlayerUpdateMessage = { player: profile };
-            this.socket.emit(WsMessagesName.PLAYER_UPDATE, message);
+            this.socketService.emit(WsMessagesName.PLAYER_UPDATE, message);
           }
         })
       ),
@@ -27,7 +27,7 @@ export class ProfileEffects {
 
   constructor(
     private actions$: Actions,
-    private socket: Socket,
+    private socketService: SocketService,
     private store: Store<AppStateInterface>
   ) {}
 }
