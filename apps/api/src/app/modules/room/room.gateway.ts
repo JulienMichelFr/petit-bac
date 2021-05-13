@@ -4,12 +4,14 @@ import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import {
   RoomJoinMessage,
+  RoomMessage,
   RoomPlayerChatDispatchMessage,
   RoomPlayerChatMessage,
+  RoomUpdateMessage,
   RoomUpdatePlayersMessage,
   WsMessagesName,
 } from '@petit-bac/ws-shared';
-import { PlayerInterface } from '@petit-bac/api-interfaces';
+import { PlayerInterface, RoomInterface } from '@petit-bac/api-interfaces';
 
 @WebSocketGateway()
 export class RoomGateway implements OnGatewayDisconnect {
@@ -38,6 +40,27 @@ export class RoomGateway implements OnGatewayDisconnect {
       player: socket.data,
     };
     this.server.to(message.roomId).emit(WsMessagesName.ROOM_PLAYER_CHAT, response);
+  }
+
+  @SubscribeMessage(WsMessagesName.ROOM_GET)
+  getState(@MessageBody() { roomId }: RoomMessage): RoomInterface {
+    return this.roomService.getRoom(roomId);
+  }
+
+  @SubscribeMessage(WsMessagesName.ROOM_UPDATE_STATE)
+  updateState(@MessageBody() { roomId }: RoomUpdateMessage): void {
+    const response: RoomUpdateMessage = { roomId, state: 'starting' };
+    this.roomService.updateRoom({ id: roomId, state: 'starting' });
+    this.server.to(roomId).emit(WsMessagesName.ROOM_UPDATE_STATE, response);
+    setTimeout(() => {
+      this.roomService.updateRoom({ id: roomId, state: 'started' });
+      this.server.to(roomId).emit(WsMessagesName.ROOM_UPDATE_STATE, { ...response, state: 'started' });
+    }, 10 * 1000);
+
+    setTimeout(() => {
+      this.roomService.updateRoom({ id: roomId, state: 'ended' });
+      this.server.to(roomId).emit(WsMessagesName.ROOM_UPDATE_STATE, { ...response, state: 'ended' });
+    }, 60 * 1000);
   }
 
   handleDisconnect(client: Socket): void {

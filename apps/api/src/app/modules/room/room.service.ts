@@ -24,7 +24,7 @@ export class RoomService {
 
   createRoom(): string {
     const roomId = RoomService.createRoomId();
-    this.rooms.set(roomId, { players: [], id: roomId });
+    this.rooms.set(roomId, { players: [], id: roomId, state: 'before' });
     return roomId;
   }
 

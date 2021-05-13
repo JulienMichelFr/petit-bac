@@ -1,0 +1,8 @@
+<div [ngSwitch]="state">
+  <ng-container *ngSwitchCase="'before'">
+    <button (click)="startGame()" color="primary" mat-raised-button>Start game</button>
+  </ng-container>
+  <ng-container *ngSwitchCase="'starting'"> Game is starting ... </ng-container>
+  <ng-container *ngSwitchCase="'started'"> Game in progress ... </ng-container>
+  <ng-container *ngSwitchCase="'ended'"> Game ended </ng-container>
+</div>

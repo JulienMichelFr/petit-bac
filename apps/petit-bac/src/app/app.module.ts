@@ -26,6 +26,7 @@ import { AppEffects } from './store/effects';
 import { metaReducers } from './store/meta-reducers';
 import { ChatModule } from './modules/chat/chat.module';
 import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
+import { GameModule } from './modules/game/game.module';
 
 const config: SocketIoConfig = { url: 'http://localhost:3333', options: {} };
 
@@ -63,6 +64,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3333', options: {} };
     MatCardModule,
     MatButtonModule,
     MatSnackBarModule,
+    GameModule,
   ],
   providers: [HasProfileGuard, RoomExistGuard],
   bootstrap: [AppComponent],
