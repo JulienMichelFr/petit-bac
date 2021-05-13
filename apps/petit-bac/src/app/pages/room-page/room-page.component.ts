@@ -2,18 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Socket } from 'ngx-socket-io';
-import {
-  PlayerInterface,
-  RoomJoinMessage,
-  RoomUpdatePlayersMessage,
-  WsMessagesName,
-} from '@petit-bac/api-interfaces';
+import { PlayerInterface } from '@petit-bac/api-interfaces';
 import { ActivatedRoute } from '@angular/router';
 import { AppStateInterface } from '../../interfaces/app-state.interface';
 import { Store } from '@ngrx/store';
 import { map, skipWhile, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { hasProfile } from '../../store/selectors/profile.selectors';
+import {
+  RoomJoinMessage,
+  RoomUpdatePlayersMessage,
+  WsMessagesName,
+} from '@petit-bac/ws-shared';
 
 @Component({
   selector: 'petit-bac-room-page',
@@ -25,7 +25,7 @@ export class RoomPageComponent implements OnInit {
   players$: Observable<
     PlayerInterface[]
   > = this.socket
-    .fromEvent<RoomUpdatePlayersMessage>(WsMessagesName.ROOMS_UPDATE_PLAYERS)
+    .fromEvent<RoomUpdatePlayersMessage>(WsMessagesName.ROOM_UPDATE_PLAYERS)
     .pipe(map((message) => message.players));
   connected = false;
   roomId: string = this.route.snapshot.paramMap.get('id');
@@ -60,7 +60,7 @@ export class RoomPageComponent implements OnInit {
         const message: RoomJoinMessage = {
           roomId: this.roomId,
         };
-        this.socket.emit(WsMessagesName.ROOMS_JOIN, message);
+        this.socket.emit(WsMessagesName.ROOM_JOIN, message);
         this.connected = true;
       });
   }

@@ -6,7 +6,7 @@ import { tap } from 'rxjs/operators';
 import { AppStateInterface } from '../../interfaces/app-state.interface';
 import { Store } from '@ngrx/store';
 import { selectProfile } from '../selectors/profile.selectors';
-import { PlayerUpdateMessage, WsMessagesName } from '@petit-bac/api-interfaces';
+import { PlayerUpdateMessage, WsMessagesName } from '@petit-bac/ws-shared';
 
 @Injectable()
 export class ProfileEffects {

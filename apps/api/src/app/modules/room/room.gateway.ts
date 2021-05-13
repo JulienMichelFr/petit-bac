@@ -10,11 +10,12 @@ import { RoomService } from './room.service';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import {
-  PlayerInterface,
   RoomJoinMessage,
+  RoomPlayerActionMessage,
   RoomUpdatePlayersMessage,
   WsMessagesName,
-} from '@petit-bac/api-interfaces';
+} from '@petit-bac/ws-shared';
+import { PlayerInterface } from '@petit-bac/api-interfaces';
 
 @WebSocketGateway()
 export class RoomGateway implements OnGatewayDisconnect {
@@ -26,7 +27,7 @@ export class RoomGateway implements OnGatewayDisconnect {
     this.logger.log('Loaded');
   }
 
-  @SubscribeMessage(WsMessagesName.ROOMS_JOIN)
+  @SubscribeMessage(WsMessagesName.ROOM_JOIN)
   joinRoom(
     @MessageBody() { roomId }: RoomJoinMessage,
     @ConnectedSocket() client: Socket
@@ -36,7 +37,12 @@ export class RoomGateway implements OnGatewayDisconnect {
     const updated = this.roomService.updateRoom(room);
     client.join(roomId);
     const response: RoomUpdatePlayersMessage = { players: updated.players };
-    this.server.to(roomId).emit(WsMessagesName.ROOMS_UPDATE_PLAYERS, response);
+    this.server.to(roomId).emit(WsMessagesName.ROOM_UPDATE_PLAYERS, response);
+  }
+
+  @SubscribeMessage(WsMessagesName.ROOM_PLAYER_ACTION)
+  playerAction(@MessageBody() message: RoomPlayerActionMessage): void {
+    this.logger.log(message.action);
   }
 
   handleDisconnect(client: Socket): void {
@@ -45,7 +51,7 @@ export class RoomGateway implements OnGatewayDisconnect {
       const response: RoomUpdatePlayersMessage = { players: room.players };
       this.server
         .to(room.id)
-        .emit(WsMessagesName.ROOMS_UPDATE_PLAYERS, response);
+        .emit(WsMessagesName.ROOM_UPDATE_PLAYERS, response);
     }
 
     this.logger.log(

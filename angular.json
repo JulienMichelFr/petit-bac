@@ -241,6 +241,27 @@
           }
         }
       }
+    },
+    "ws-shared": {
+      "root": "libs/ws-shared",
+      "sourceRoot": "libs/ws-shared/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/ws-shared/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/ws-shared"],
+          "options": {
+            "jestConfig": "libs/ws-shared/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }

@@ -4,8 +4,8 @@ import {
   SubscribeMessage,
   WebSocketGateway,
 } from '@nestjs/websockets';
-import { PlayerUpdateMessage, WsMessagesName } from '@petit-bac/api-interfaces';
 import { Logger } from '@nestjs/common';
+import { PlayerUpdateMessage, WsMessagesName } from '@petit-bac/ws-shared';
 
 @WebSocketGateway()
 export class GeneralGateway {

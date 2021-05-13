@@ -21,6 +21,7 @@
     "petit-bac-e2e": { "tags": [], "implicitDependencies": ["petit-bac"] },
     "api": { "tags": [] },
     "api-interfaces": { "tags": [] },
-    "utils": { "tags": [] }
+    "utils": { "tags": [] },
+    "ws-shared": { "tags": [] }
   }
 }

@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@petit-bac/api-interfaces": ["libs/api-interfaces/src/index.ts"],
-      "@petit-bac/utils": ["libs/utils/src/index.ts"]
+      "@petit-bac/utils": ["libs/utils/src/index.ts"],
+      "@petit-bac/ws-shared": ["libs/ws-shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
