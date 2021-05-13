@@ -11,13 +11,7 @@ import { ChatService } from './services/chat/chat.service';
 
 @NgModule({
   declarations: [ChatInputComponent, ChatMessagesComponent, ChatComponent],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
   providers: [ChatService],
   exports: [ChatComponent],
 })

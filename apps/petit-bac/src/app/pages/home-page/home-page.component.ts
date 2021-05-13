@@ -16,15 +16,9 @@ import { map } from 'rxjs/operators';
 })
 export class HomePageComponent {
   player: PlayerInterface = { username: '' };
-  joinDisabled$: Observable<boolean> = this.store
-    .select(hasProfile)
-    .pipe(map((hasProfile) => !hasProfile));
+  joinDisabled$: Observable<boolean> = this.store.select(hasProfile).pipe(map((hasProfile) => !hasProfile));
 
-  constructor(
-    private roomService: RoomService,
-    private router: Router,
-    private store: Store<AppStateInterface>
-  ) {}
+  constructor(private roomService: RoomService, private router: Router, private store: Store<AppStateInterface>) {}
 
   updateUser(player: PlayerInterface): void {
     this.player = player;

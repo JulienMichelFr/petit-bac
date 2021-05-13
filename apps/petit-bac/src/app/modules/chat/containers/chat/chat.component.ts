@@ -10,8 +10,7 @@ import { ChatService } from '../../services/chat/chat.service';
   styleUrls: ['./chat.component.scss'],
 })
 export class ChatComponent {
-  messages$: Observable<RoomPlayerChatDispatchMessage[]> = this.chatService
-    .messages$;
+  messages$: Observable<RoomPlayerChatDispatchMessage[]> = this.chatService.messages$;
 
   constructor(private chatService: ChatService) {}
 

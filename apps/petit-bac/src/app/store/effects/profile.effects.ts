@@ -25,9 +25,5 @@ export class ProfileEffects {
     { dispatch: false }
   );
 
-  constructor(
-    private actions$: Actions,
-    private socketService: SocketService,
-    private store: Store<AppStateInterface>
-  ) {}
+  constructor(private actions$: Actions, private socketService: SocketService, private store: Store<AppStateInterface>) {}
 }

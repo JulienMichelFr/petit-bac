@@ -16,15 +16,9 @@ import { map } from 'rxjs/operators';
 export class RoomInvitePageComponent {
   player: PlayerInterface = { username: '' };
 
-  joinDisabled$: Observable<boolean> = this.store
-    .select(hasProfile)
-    .pipe(map((hasProfile) => !hasProfile));
+  joinDisabled$: Observable<boolean> = this.store.select(hasProfile).pipe(map((hasProfile) => !hasProfile));
 
-  constructor(
-    private store: Store<AppStateInterface>,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {}
+  constructor(private store: Store<AppStateInterface>, private router: Router, private route: ActivatedRoute) {}
 
   updateUser(player: PlayerInterface) {
     this.player = player;

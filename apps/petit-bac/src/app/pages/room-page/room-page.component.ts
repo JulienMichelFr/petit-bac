@@ -17,9 +17,7 @@ import { SocketService } from '../../service/socket/socket.service';
 })
 export class RoomPageComponent implements OnInit {
   link: string;
-  players$: Observable<
-    PlayerInterface[]
-  > = this.socketService
+  players$: Observable<PlayerInterface[]> = this.socketService
     .fromEvent<RoomUpdatePlayersMessage>(WsMessagesName.ROOM_UPDATE_PLAYERS)
     .pipe(map((message) => message.players));
   connected = false;
@@ -49,10 +47,7 @@ export class RoomPageComponent implements OnInit {
         skipWhile((hasProfile) => !hasProfile),
         take(1),
         switchMap(() => {
-          return this.socketService.sendRoomMessage(
-            WsMessagesName.ROOM_JOIN,
-            {}
-          );
+          return this.socketService.sendRoomMessage(WsMessagesName.ROOM_JOIN, {});
         })
       )
       .subscribe(() => {

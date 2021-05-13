@@ -1,15 +1,6 @@
 <mat-card>
   <mat-card-content>
-    <petit-bac-user-form
-      (formChange)="updateUser($event)"
-    ></petit-bac-user-form>
-    <button
-      (click)="createRoom()"
-      [disabled]="joinDisabled$ | async"
-      color="primary"
-      mat-raised-button
-    >
-      Create room
-    </button>
+    <petit-bac-user-form (formChange)="updateUser($event)"></petit-bac-user-form>
+    <button (click)="createRoom()" [disabled]="joinDisabled$ | async" color="primary" mat-raised-button>Create room</button>
   </mat-card-content>
 </mat-card>

@@ -28,9 +28,7 @@ export class RoomService {
     return roomId;
   }
 
-  updateRoom(
-    updateRoom: Partial<RoomInterface> & { id: string }
-  ): RoomInterface {
+  updateRoom(updateRoom: Partial<RoomInterface> & { id: string }): RoomInterface {
     const room: RoomInterface = {
       ...this.getRoom(updateRoom.id),
       ...updateRoom,
@@ -47,9 +45,7 @@ export class RoomService {
     const updatedRooms: RoomInterface[] = [];
     for (const room of this.rooms.values()) {
       if (room.players.find((p) => p.username === player.username)) {
-        room.players = room.players.filter(
-          (p) => p.username !== player.username
-        );
+        room.players = room.players.filter((p) => p.username !== player.username);
         this.rooms.set(room.id, room);
         updatedRooms.push(room);
       }

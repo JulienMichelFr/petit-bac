@@ -15,7 +15,6 @@ export interface RoomPlayerChatMessage extends RoomMessage {
   message: string;
 }
 
-export interface RoomPlayerChatDispatchMessage
-  extends Pick<RoomPlayerChatMessage, 'message'> {
+export interface RoomPlayerChatDispatchMessage extends Pick<RoomPlayerChatMessage, 'message'> {
   player: PlayerInterface;
 }

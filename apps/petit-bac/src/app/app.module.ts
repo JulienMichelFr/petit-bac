@@ -30,13 +30,7 @@ import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 const config: SocketIoConfig = { url: 'http://localhost:3333', options: {} };
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomePageComponent,
-    NotFoundPageComponent,
-    RoomPageComponent,
-    RoomInvitePageComponent,
-  ],
+  declarations: [AppComponent, HomePageComponent, NotFoundPageComponent, RoomPageComponent, RoomInvitePageComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -65,9 +59,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3333', options: {} };
     ),
     StoreRouterConnectingModule.forRoot(),
     EffectsModule.forRoot(AppEffects),
-    environment.production
-      ? undefined
-      : StoreDevtoolsModule.instrument({ maxAge: 25 }),
+    environment.production ? undefined : StoreDevtoolsModule.instrument({ maxAge: 25 }),
     MatCardModule,
     MatButtonModule,
     MatSnackBarModule,

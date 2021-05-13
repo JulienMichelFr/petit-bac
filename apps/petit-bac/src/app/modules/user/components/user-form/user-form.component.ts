@@ -1,10 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { PlayerInterface } from '@petit-bac/api-interfaces';
 import { Validators } from '@angular/forms';
@@ -22,10 +16,7 @@ import { selectProfile } from '../../../../store/selectors/profile.selectors';
 export class UserFormComponent implements OnDestroy, OnInit {
   @Output() formChange = new EventEmitter<PlayerInterface>();
   form: FormGroup<PlayerInterface> = new FormGroup<PlayerInterface>({
-    username: new FormControl<string>('', [
-      Validators.required,
-      Validators.minLength(2),
-    ]),
+    username: new FormControl<string>('', [Validators.required, Validators.minLength(2)]),
   });
   private sub: Subscription = new Subscription();
 

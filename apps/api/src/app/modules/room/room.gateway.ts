@@ -1,11 +1,4 @@
-import {
-  ConnectedSocket,
-  MessageBody,
-  OnGatewayDisconnect,
-  SubscribeMessage,
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { RoomService } from './room.service';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
@@ -29,10 +22,7 @@ export class RoomGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_JOIN)
-  joinRoom(
-    @MessageBody() { roomId }: RoomJoinMessage,
-    @ConnectedSocket() client: Socket
-  ): void {
+  joinRoom(@MessageBody() { roomId }: RoomJoinMessage, @ConnectedSocket() client: Socket): void {
     const room = this.roomService.getRoom(roomId);
     room.players.push(client.data);
     const updated = this.roomService.updateRoom(room);
@@ -42,30 +32,21 @@ export class RoomGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_PLAYER_CHAT)
-  playerAction(
-    @MessageBody() message: RoomPlayerChatMessage,
-    @ConnectedSocket() socket: Socket
-  ): void {
+  playerAction(@MessageBody() message: RoomPlayerChatMessage, @ConnectedSocket() socket: Socket): void {
     const response: RoomPlayerChatDispatchMessage = {
       message: message.message,
       player: socket.data,
     };
-    this.server
-      .to(message.roomId)
-      .emit(WsMessagesName.ROOM_PLAYER_CHAT, response);
+    this.server.to(message.roomId).emit(WsMessagesName.ROOM_PLAYER_CHAT, response);
   }
 
   handleDisconnect(client: Socket): void {
     const rooms = this.roomService.disconnectPlayer(client.data);
     for (const room of rooms) {
       const response: RoomUpdatePlayersMessage = { players: room.players };
-      this.server
-        .to(room.id)
-        .emit(WsMessagesName.ROOM_UPDATE_PLAYERS, response);
+      this.server.to(room.id).emit(WsMessagesName.ROOM_UPDATE_PLAYERS, response);
     }
 
-    this.logger.log(
-      `Player ${(<PlayerInterface>client.data)?.username} disconnected`
-    );
+    this.logger.log(`Player ${(<PlayerInterface>client.data)?.username} disconnected`);
   }
 }
