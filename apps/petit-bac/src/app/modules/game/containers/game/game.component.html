@@ -6,3 +6,4 @@
   <ng-container *ngSwitchCase="'started'"> Game in progress ... </ng-container>
   <ng-container *ngSwitchCase="'ended'"> Game ended </ng-container>
 </div>
+<petit-bac-game-inputs (sendResult)="sendResult($event)" letter="A"></petit-bac-game-inputs>

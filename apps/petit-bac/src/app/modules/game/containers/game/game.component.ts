@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SocketService } from '../../../../service/socket/socket.service';
 import { RoomUpdateMessage, WsMessagesName } from '@petit-bac/ws-shared';
-import { RoomState } from '@petit-bac/api-interfaces';
+import { GameFieldsInterface, RoomState } from '@petit-bac/api-interfaces';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -29,6 +29,10 @@ export class GameComponent implements OnInit, OnDestroy {
 
   startGame(): void {
     this.socketService.sendRoomMessage(WsMessagesName.ROOM_UPDATE_STATE, { state: 'starting' }).subscribe();
+  }
+
+  sendResult(result: GameFieldsInterface): void {
+    console.log({ result });
   }
 
   private checkGameState(): void {

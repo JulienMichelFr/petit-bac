@@ -1,0 +1,23 @@
+<h3>The letter is : {{ this.letter | uppercase }}</h3>
+<form (ngSubmit)="sendResult.emit(form.value)" [formGroup]="form">
+  <mat-form-field>
+    <input formControlName="fruitOrVegetable" matInput placeholder="Fruit or vegetable" type="text" />
+  </mat-form-field>
+  <mat-form-field>
+    <input formControlName="cityOrCountry" matInput placeholder="City or country" type="text" />
+  </mat-form-field>
+  <mat-form-field>
+    <input formControlName="job" matInput placeholder="Job" type="text" />
+  </mat-form-field>
+  <mat-form-field>
+    <input formControlName="animal" matInput placeholder="Animal" type="text" />
+  </mat-form-field>
+  <mat-form-field>
+    <input formControlName="girlName" matInput placeholder="Girl name" type="text" />
+  </mat-form-field>
+  <mat-form-field>
+    <input formControlName="movieOrTvShow" matInput placeholder="Movie or TV show" type="text" />
+  </mat-form-field>
+
+  <button color="accent" mat-raised-button type="submit">Send</button>
+</form>
