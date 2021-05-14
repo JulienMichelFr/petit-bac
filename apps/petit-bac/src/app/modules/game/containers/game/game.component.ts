@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SocketService } from '../../../../service/socket/socket.service';
 import { RoomUpdateMessage, WsMessagesName } from '@petit-bac/ws-shared';
-import { GameFieldsInterface, RoomState } from '@petit-bac/api-interfaces';
+import { GameFieldsInterface, GameRound, RoomState } from '@petit-bac/api-interfaces';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -11,6 +11,8 @@ import { Subscription } from 'rxjs';
 })
 export class GameComponent implements OnInit, OnDestroy {
   state: RoomState = 'before';
+  letter = 'A';
+  results: GameRound[] = null;
 
   private subscription: Subscription = new Subscription();
 
@@ -32,12 +34,27 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   sendResult(result: GameFieldsInterface): void {
-    console.log({ result });
+    this.socketService.sendRoomMessage(WsMessagesName.ROOM_SEND_RESULT, { letter: this.letter, result }).subscribe();
   }
 
   private checkGameState(): void {
     this.subscription.add(
-      this.socketService.fromEvent<RoomUpdateMessage>(WsMessagesName.ROOM_UPDATE_STATE).subscribe(({ state }) => (this.state = state))
+      this.socketService.fromEvent<RoomUpdateMessage>(WsMessagesName.ROOM_UPDATE_STATE).subscribe(({ state, data }) => {
+        switch (state) {
+          case 'ended':
+            if (data) {
+              this.results = data as GameRound[];
+            }
+            break;
+          case 'started':
+            if (data) {
+              this.letter = data as string;
+            }
+            break;
+        }
+
+        this.state = state;
+      })
     );
   }
 }

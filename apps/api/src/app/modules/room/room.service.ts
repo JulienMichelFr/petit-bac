@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomBytes } from 'crypto';
-import { PlayerInterface, RoomInterface } from '@petit-bac/api-interfaces';
+import { PlayerInterface, PlayerResultWithLetter, RoomInterface } from '@petit-bac/api-interfaces';
 
 @Injectable()
 export class RoomService {
@@ -14,18 +14,18 @@ export class RoomService {
     return this.rooms.has(roomId);
   }
 
+  private static generateRandomLetter(): string {
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+    return alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+
   getRoom(roomId: string): RoomInterface {
     const room = this.rooms.get(roomId);
     if (!room) {
-      throw new NotFoundException('Room not found');
+      throw new NotFoundException(`Room with id ${roomId} not found`);
     }
     return room;
-  }
-
-  createRoom(): string {
-    const roomId = RoomService.createRoomId();
-    this.rooms.set(roomId, { players: [], id: roomId, state: 'before' });
-    return roomId;
   }
 
   updateRoom(updateRoom: Partial<RoomInterface> & { id: string }): RoomInterface {
@@ -51,5 +51,36 @@ export class RoomService {
       }
     }
     return updatedRooms;
+  }
+
+  createRoom(): RoomInterface {
+    const roomId = RoomService.createRoomId();
+    const room: RoomInterface = { players: [], id: roomId, state: 'before', rounds: [] };
+    this.rooms.set(roomId, room);
+    return room;
+  }
+
+  startRoundForRoom(roomId: string): string {
+    const room = this.getRoom(roomId);
+    const letters: string[] = room.rounds.map(({ letter }) => letter);
+    let newLetter: string = RoomService.generateRandomLetter();
+    while (letters.includes(newLetter)) {
+      newLetter = RoomService.generateRandomLetter();
+    }
+
+    room.rounds.push({
+      letter: newLetter,
+      results: [],
+    });
+
+    this.updateRoom(room);
+    return newLetter;
+  }
+
+  addRoundForRoom(roomId: string, round: PlayerResultWithLetter): RoomInterface {
+    const room = this.getRoom(roomId);
+    const found = room.rounds.find(({ letter }) => round.letter === letter);
+    found.results.push({ player: round.player, result: round.result });
+    return this.updateRoom(room);
   }
 }

@@ -8,12 +8,7 @@ export class RoomController {
 
   @Post()
   async createRoom(): Promise<RoomInterface> {
-    const roomId = this.roomService.createRoom();
-
-    return {
-      id: roomId,
-      players: [],
-    };
+    return this.roomService.createRoom();
   }
 
   @Get(':id')

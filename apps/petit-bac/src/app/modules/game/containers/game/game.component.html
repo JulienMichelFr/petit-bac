@@ -3,7 +3,11 @@
     <button (click)="startGame()" color="primary" mat-raised-button>Start game</button>
   </ng-container>
   <ng-container *ngSwitchCase="'starting'"> Game is starting ... </ng-container>
-  <ng-container *ngSwitchCase="'started'"> Game in progress ... </ng-container>
-  <ng-container *ngSwitchCase="'ended'"> Game ended </ng-container>
+  <ng-container *ngSwitchCase="'started'">
+    <p>Game in progress ...</p>
+    <petit-bac-game-inputs (sendResult)="sendResult($event)" [letter]="letter"></petit-bac-game-inputs>
+  </ng-container>
+  <ng-container *ngSwitchCase="'ended'">
+    <p>Game ended</p>
+  </ng-container>
 </div>
-<petit-bac-game-inputs (sendResult)="sendResult($event)" letter="A"></petit-bac-game-inputs>
