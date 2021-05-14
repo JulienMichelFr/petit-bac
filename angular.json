@@ -47,13 +47,15 @@
             "main": "apps/petit-bac/src/main.ts",
             "polyfills": "apps/petit-bac/src/polyfills.ts",
             "tsConfig": "apps/petit-bac/tsconfig.app.json",
-            "aot": true,
-            "assets": [
-              "apps/petit-bac/src/favicon.ico",
-              "apps/petit-bac/src/assets"
-            ],
+            "assets": ["apps/petit-bac/src/favicon.ico", "apps/petit-bac/src/assets"],
             "styles": ["apps/petit-bac/src/styles.scss"],
-            "scripts": []
+            "scripts": [],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -106,10 +108,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/petit-bac/src/**/*.ts",
-              "apps/petit-bac/src/**/*.html"
-            ]
+            "lintFilePatterns": ["apps/petit-bac/src/**/*.ts", "apps/petit-bac/src/**/*.html"]
           }
         },
         "test": {
