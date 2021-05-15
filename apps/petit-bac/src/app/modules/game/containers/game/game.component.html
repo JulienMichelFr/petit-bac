@@ -7,4 +7,7 @@
   <ng-container *ngSwitchCase="RoomStates.started">
     <petit-bac-game-inputs (sendResult)="sendResult($event)" [letter]="letter"></petit-bac-game-inputs>
   </ng-container>
+  <ng-container *ngSwitchCase="RoomStates.ended">
+    <petit-bac-game-round-result [roundResult]="results[0]"></petit-bac-game-round-result>
+  </ng-container>
 </div>

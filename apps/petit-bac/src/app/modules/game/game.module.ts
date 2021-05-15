@@ -8,10 +8,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { GameStatePipe } from './pipes/game-state/game-state.pipe';
+import { GameRoundResultComponent } from './components/game-round-result/game-round-result.component';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
-  declarations: [GameComponent, GameInputsComponent, GameStatePipe],
-  imports: [CommonModule, MatButtonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatProgressBarModule],
+  declarations: [GameComponent, GameInputsComponent, GameStatePipe, GameRoundResultComponent],
+  imports: [CommonModule, MatButtonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatTableModule],
   exports: [GameComponent, GameStatePipe],
 })
 export class GameModule {}

@@ -1,0 +1,33 @@
+<mat-table [dataSource]="roundResult.results">
+  <ng-container matColumnDef="player">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let element">{{ element.player.username }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="fruitOrVegetable">
+    <mat-header-cell *matHeaderCellDef>Fruit or Vegetable</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{ element.result.fruitOrVegetable }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="cityOrCountry">
+    <mat-header-cell *matHeaderCellDef>City or Country</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{ element.result.cityOrCountry }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="job">
+    <mat-header-cell *matHeaderCellDef>Job</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{ element.result.job }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="animal">
+    <mat-header-cell *matHeaderCellDef>Animal</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{ element.result.animal }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="girlName">
+    <mat-header-cell *matHeaderCellDef>Girl name</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{ element.result.girlName }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="movieOrTvShow">
+    <mat-header-cell *matHeaderCellDef>Movie or TV show</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{ element.result.movieOrTvShow }}</mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: columns"></mat-row>
+</mat-table>

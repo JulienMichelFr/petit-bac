@@ -24,8 +24,10 @@ export class GameComponent implements OnInit, OnDestroy {
   constructor(private socketService: SocketService) {}
 
   ngOnInit(): void {
-    this.socketService.sendRoomMessage(WsMessagesName.ROOM_GET).subscribe(({ state }) => {
+    this.socketService.sendRoomMessage(WsMessagesName.ROOM_GET).subscribe(({ state, currentLetter, rounds }) => {
       this.state = state;
+      this.letter = currentLetter;
+      this.results = rounds;
     });
     this.checkGameState();
   }
