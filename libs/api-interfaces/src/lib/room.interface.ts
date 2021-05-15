@@ -8,4 +8,5 @@ export interface RoomInterface {
   players: PlayerInterface[];
   state: RoomState;
   rounds: GameRound[];
+  currentLetter?: string;
 }

@@ -10,14 +10,14 @@ export class RoomService {
     return randomBytes(20).toString('hex').toUpperCase().substring(0, 5);
   }
 
-  roomExist(roomId: string): boolean {
-    return this.rooms.has(roomId);
-  }
-
   private static generateRandomLetter(): string {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
     return alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+
+  roomExist(roomId: string): boolean {
+    return this.rooms.has(roomId);
   }
 
   getRoom(roomId: string): RoomInterface {
@@ -60,7 +60,7 @@ export class RoomService {
     return room;
   }
 
-  startRoundForRoom(roomId: string): string {
+  startRoundForRoom(roomId: string): RoomInterface {
     const room = this.getRoom(roomId);
     const letters: string[] = room.rounds.map(({ letter }) => letter);
     let newLetter: string = RoomService.generateRandomLetter();
@@ -72,9 +72,10 @@ export class RoomService {
       letter: newLetter,
       results: [],
     });
+    room.currentLetter = newLetter;
+    room.state = 'started';
 
-    this.updateRoom(room);
-    return newLetter;
+    return this.updateRoom(room);
   }
 
   addRoundForRoom(roomId: string, round: PlayerResultWithLetter): RoomInterface {

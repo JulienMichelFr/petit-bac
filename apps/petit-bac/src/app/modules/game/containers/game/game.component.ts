@@ -2,7 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SocketService } from '../../../../service/socket/socket.service';
 import { RoomUpdateMessage, WsMessagesName } from '@petit-bac/ws-shared';
 import { GameFieldsInterface, GameRound, RoomState } from '@petit-bac/api-interfaces';
-import { Subscription } from 'rxjs';
+import { interval, Observable, Subscription } from 'rxjs';
+import { map, takeWhile } from 'rxjs/operators';
 
 @Component({
   selector: 'petit-bac-game',
@@ -13,6 +14,8 @@ export class GameComponent implements OnInit, OnDestroy {
   state: RoomState = 'before';
   letter = 'A';
   results: GameRound[] = null;
+
+  progress$: Observable<number>;
 
   private subscription: Subscription = new Subscription();
 
@@ -39,7 +42,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   private checkGameState(): void {
     this.subscription.add(
-      this.socketService.fromEvent<RoomUpdateMessage>(WsMessagesName.ROOM_UPDATE_STATE).subscribe(({ state, data }) => {
+      this.socketService.fromEvent<RoomUpdateMessage>(WsMessagesName.ROOM_UPDATE_STATE).subscribe(({ state, data, duration }) => {
         switch (state) {
           case 'ended':
             if (data) {
@@ -52,9 +55,21 @@ export class GameComponent implements OnInit, OnDestroy {
             }
             break;
         }
+        if (duration) {
+          this.setProgress(duration);
+        }
 
         this.state = state;
       })
+    );
+  }
+
+  private setProgress(duration: number): void {
+    this.progress$ = interval(100).pipe(
+      map((sec) => {
+        return (sec * 10000) / duration;
+      }),
+      takeWhile((progress) => progress <= 100)
     );
   }
 }

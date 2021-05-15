@@ -22,6 +22,7 @@ export interface RoomPlayerChatDispatchMessage extends Pick<RoomPlayerChatMessag
 export interface RoomUpdateMessage extends RoomMessage {
   state: RoomState;
   data?: GameRound[] | string;
+  duration?: number;
 }
 
 export interface RoomSendResult extends RoomMessage {
