@@ -12,7 +12,7 @@ import {
   RoomUpdatePlayersMessage,
   WsMessagesName,
 } from '@petit-bac/ws-shared';
-import { PlayerInterface, RoomInterface } from '@petit-bac/api-interfaces';
+import { PlayerInterface, RoomInterface, RoomState } from '@petit-bac/api-interfaces';
 import { Observable, of } from 'rxjs';
 import { delay, map, switchMap } from 'rxjs/operators';
 
@@ -55,8 +55,8 @@ export class RoomGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage(WsMessagesName.ROOM_UPDATE_STATE)
   updateState(@MessageBody() { roomId }: RoomUpdateMessage): void {
-    const response: RoomUpdateMessage = { roomId, state: 'starting', duration: GAME_START_DELAY };
-    this.roomService.updateRoom({ id: roomId, state: 'starting' });
+    const response: RoomUpdateMessage = { roomId, state: RoomState.starting, duration: GAME_START_DELAY };
+    this.roomService.updateRoom({ id: roomId, state: RoomState.starting });
     this.server.to(roomId).emit(WsMessagesName.ROOM_UPDATE_STATE, response);
 
     this.startRoom(roomId)
@@ -100,10 +100,10 @@ export class RoomGateway implements OnGatewayDisconnect {
     return of(null).pipe(
       delay(GAME_DURATION + 1000),
       map(() => {
-        const room: RoomInterface = this.roomService.updateRoom({ id: roomId, state: 'ended' });
+        const room: RoomInterface = this.roomService.updateRoom({ id: roomId, state: RoomState.ended });
         return this.sendToRoom(roomId, WsMessagesName.ROOM_UPDATE_STATE, {
           roomId,
-          state: 'ended',
+          state: RoomState.ended,
           data: room.rounds,
         });
       })

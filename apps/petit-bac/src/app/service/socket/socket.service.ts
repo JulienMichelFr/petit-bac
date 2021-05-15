@@ -68,7 +68,6 @@ export class SocketService {
             subscriber.complete();
           });
         });
-        // return of(this.socket.emit(type, message));
       })
     );
   }

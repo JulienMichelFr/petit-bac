@@ -1,10 +1,10 @@
 <mat-progress-bar *ngIf="progress$ | async as progress" [value]="progress" color="primary" mode="determinate"></mat-progress-bar>
 <h2>{{ state | gameState }}</h2>
 <div [ngSwitch]="state">
-  <ng-container *ngSwitchCase="'before'">
+  <ng-container *ngSwitchCase="RoomStates.lobby">
     <button (click)="startGame()" color="primary" mat-raised-button>Start game</button>
   </ng-container>
-  <ng-container *ngSwitchCase="'started'">
+  <ng-container *ngSwitchCase="RoomStates.started">
     <petit-bac-game-inputs (sendResult)="sendResult($event)" [letter]="letter"></petit-bac-game-inputs>
   </ng-container>
 </div>

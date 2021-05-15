@@ -7,13 +7,13 @@ import { RoomState } from '@petit-bac/api-interfaces';
 export class GameStatePipe implements PipeTransform {
   transform(value: RoomState): string {
     switch (value) {
-      case 'before':
+      case RoomState.lobby:
         return 'Game will start soon';
-      case 'starting':
+      case RoomState.starting:
         return 'Game is starting ...';
-      case 'started':
+      case RoomState.started:
         return 'Game is in progress ...';
-      case 'ended':
+      case RoomState.ended:
         return 'Game has ended';
     }
   }

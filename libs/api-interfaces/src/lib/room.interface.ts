@@ -1,7 +1,12 @@
 import { PlayerInterface } from './player.interface';
 import { GameRound } from './game-fields.interface';
 
-export type RoomState = 'before' | 'starting' | 'started' | 'ended';
+export enum RoomState {
+  lobby,
+  starting,
+  started,
+  ended,
+}
 
 export interface RoomInterface {
   id: string;

@@ -11,11 +11,13 @@ import { map, takeWhile } from 'rxjs/operators';
   styleUrls: ['./game.component.scss'],
 })
 export class GameComponent implements OnInit, OnDestroy {
-  state: RoomState = 'before';
+  state: RoomState = RoomState.lobby;
   letter = 'A';
   results: GameRound[] = null;
 
   progress$: Observable<number>;
+
+  readonly RoomStates = RoomState;
 
   private subscription: Subscription = new Subscription();
 
@@ -33,7 +35,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   startGame(): void {
-    this.socketService.sendRoomMessage(WsMessagesName.ROOM_UPDATE_STATE, { state: 'starting' }).subscribe();
+    this.socketService.sendRoomMessage(WsMessagesName.ROOM_UPDATE_STATE, { state: RoomState.starting }).subscribe();
   }
 
   sendResult(result: GameFieldsInterface): void {
@@ -44,12 +46,12 @@ export class GameComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.socketService.fromEvent<RoomUpdateMessage>(WsMessagesName.ROOM_UPDATE_STATE).subscribe(({ state, data, duration }) => {
         switch (state) {
-          case 'ended':
+          case RoomState.ended:
             if (data) {
               this.results = data as GameRound[];
             }
             break;
-          case 'started':
+          case RoomState.started:
             if (data) {
               this.letter = data as string;
             }
