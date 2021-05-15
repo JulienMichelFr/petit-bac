@@ -15,9 +15,7 @@ import {
 import { PlayerInterface, RoomInterface, RoomStatus } from '@petit-bac/api-interfaces';
 import { Observable, of } from 'rxjs';
 import { delay, map, switchMap } from 'rxjs/operators';
-
-const GAME_START_DELAY = 3 * 1000;
-const GAME_DURATION = 30 * 1000;
+import { GAME_DURATION, GAME_START_DELAY } from '../../../environments/environment';
 
 @WebSocketGateway()
 export class RoomGateway implements OnGatewayDisconnect {
@@ -54,7 +52,7 @@ export class RoomGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage(WsMessagesName.ROOM_UPDATE_STATE)
   updateState(@MessageBody() { roomId }: RoomUpdateMessage): void {
-    const updatedRoom = this.roomService.updateRoom({ id: roomId, state: RoomStatus.starting });
+    const updatedRoom = this.roomService.updateRoom({ id: roomId, state: RoomStatus.starting, statusDuration: GAME_START_DELAY });
     this.sendToRoomUpdate(roomId, updatedRoom);
 
     this.startRoom(roomId)
@@ -92,7 +90,7 @@ export class RoomGateway implements OnGatewayDisconnect {
     return of(null).pipe(
       delay(GAME_DURATION + 1000),
       map(() => {
-        const room: RoomInterface = this.roomService.updateRoom({ id: roomId, state: RoomStatus.ended });
+        const room: RoomInterface = this.roomService.updateRoom({ id: roomId, state: RoomStatus.ended, statusDuration: 0 });
         return this.sendToRoomUpdate(roomId, room);
       })
     );

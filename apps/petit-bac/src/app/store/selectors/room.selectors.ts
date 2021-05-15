@@ -19,3 +19,7 @@ export const selectRoomCurrentLetter = createSelector(selectRoom, (room) => {
 export const selectRoomRounds = createSelector(selectRoom, (room) => {
   return room?.rounds ?? [];
 });
+
+export const selectRoomStatusDuration = createSelector(selectRoom, (room) => {
+  return room?.statusDuration ?? 0;
+});

@@ -13,5 +13,6 @@ export interface RoomInterface {
   players: PlayerInterface[];
   state: RoomStatus;
   rounds: GameRound[];
-  currentLetter?: string;
+  currentLetter: string;
+  statusDuration: number;
 }

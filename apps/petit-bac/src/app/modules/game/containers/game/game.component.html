@@ -1,4 +1,7 @@
-<mat-progress-bar *ngIf="progress$ | async as progress" [value]="progress" color="primary" mode="determinate"></mat-progress-bar>
+<ng-container *ngIf="progress$ | async as progress">
+  <mat-progress-bar *ngIf="progress > 0 && progress < 100" [value]="progress" color="primary" mode="determinate"></mat-progress-bar>
+</ng-container>
+
 <h2>{{ roomStatus$ | async | gameState }}</h2>
 <div [ngSwitch]="roomStatus$ | async">
   <ng-container *ngSwitchCase="RoomStates.lobby">

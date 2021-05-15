@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { PlayerInterface, PlayerResult, RoomInterface, RoomStatus } from '@petit-bac/api-interfaces';
+import { GAME_DURATION } from '../../../environments/environment';
 
 @Injectable()
 export class RoomService {
@@ -55,7 +56,7 @@ export class RoomService {
 
   createRoom(): RoomInterface {
     const roomId = RoomService.createRoomId();
-    const room: RoomInterface = { players: [], id: roomId, state: RoomStatus.lobby, rounds: [] };
+    const room: RoomInterface = { players: [], id: roomId, state: RoomStatus.lobby, rounds: [], statusDuration: 0, currentLetter: null };
     this.rooms.set(roomId, room);
     return room;
   }
@@ -74,6 +75,7 @@ export class RoomService {
     });
     room.currentLetter = newLetter;
     room.state = RoomStatus.started;
+    room.statusDuration = GAME_DURATION;
 
     return this.updateRoom(room);
   }

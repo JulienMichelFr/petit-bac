@@ -3,10 +3,15 @@ import { SocketService } from '../../../../service/socket/socket.service';
 import { WsMessagesName } from '@petit-bac/ws-shared';
 import { GameFieldsInterface, GameRound, RoomStatus } from '@petit-bac/api-interfaces';
 import { interval, Observable, Subscription } from 'rxjs';
-import { map, takeWhile } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, switchMap, takeWhile } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { AppStateInterface } from '../../../../interfaces/app-state.interface';
-import { selectRoomCurrentLetter, selectRoomRounds, selectRoomStatus } from '../../../../store/selectors/room.selectors';
+import {
+  selectRoomCurrentLetter,
+  selectRoomRounds,
+  selectRoomStatus,
+  selectRoomStatusDuration,
+} from '../../../../store/selectors/room.selectors';
 
 @Component({
   selector: 'petit-bac-game',
@@ -21,7 +26,11 @@ export class GameComponent implements OnDestroy {
       return rounds[rounds.length - 1];
     })
   );
-  progress$: Observable<number>;
+  progress$: Observable<number> = this.store.select(selectRoomStatusDuration).pipe(
+    distinctUntilChanged(),
+    filter((duration) => duration > 0),
+    switchMap((duration) => this.getProgress(duration))
+  );
 
   readonly RoomStates = RoomStatus;
 
@@ -41,12 +50,12 @@ export class GameComponent implements OnDestroy {
     this.socketService.sendRoomMessage(WsMessagesName.ROOM_SEND_RESULT, { result }).subscribe();
   }
 
-  private setProgress(duration: number): void {
-    this.progress$ = interval(100).pipe(
+  private getProgress(duration: number): Observable<number> {
+    return interval(100).pipe(
       map((sec) => {
         return (sec * 10000) / duration;
       }),
-      takeWhile((progress) => progress <= 100)
+      takeWhile((progress) => progress < 100)
     );
   }
 }
