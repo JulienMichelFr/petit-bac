@@ -13,8 +13,6 @@ export interface PlayerResult {
   result: GameFieldsInterface;
 }
 
-export type PlayerResultWithLetter = PlayerResult & { letter: string };
-
 export interface GameRound {
   letter: string;
   results: PlayerResult[];

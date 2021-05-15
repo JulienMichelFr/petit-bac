@@ -1,4 +1,4 @@
-import { GameFieldsInterface, GameRound, PlayerInterface, RoomState } from '@petit-bac/api-interfaces';
+import { GameFieldsInterface, GameRound, PlayerInterface, RoomStatus } from '@petit-bac/api-interfaces';
 
 export interface RoomUpdatePlayersMessage {
   players: PlayerInterface[];
@@ -20,12 +20,11 @@ export interface RoomPlayerChatDispatchMessage extends Pick<RoomPlayerChatMessag
 }
 
 export interface RoomUpdateMessage extends RoomMessage {
-  state: RoomState;
+  state: RoomStatus;
   data?: GameRound[] | string;
   duration?: number;
 }
 
 export interface RoomSendResult extends RoomMessage {
   result: GameFieldsInterface;
-  letter: string;
 }

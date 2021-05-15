@@ -1,19 +1,19 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { RoomState } from '@petit-bac/api-interfaces';
+import { RoomStatus } from '@petit-bac/api-interfaces';
 
 @Pipe({
   name: 'gameState',
 })
 export class GameStatePipe implements PipeTransform {
-  transform(value: RoomState): string {
+  transform(value: RoomStatus): string {
     switch (value) {
-      case RoomState.lobby:
+      case RoomStatus.lobby:
         return 'Game will start soon';
-      case RoomState.starting:
+      case RoomStatus.starting:
         return 'Game is starting ...';
-      case RoomState.started:
+      case RoomStatus.started:
         return 'Game is in progress ...';
-      case RoomState.ended:
+      case RoomStatus.ended:
         return 'Game has ended';
     }
   }

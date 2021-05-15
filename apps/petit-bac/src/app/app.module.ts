@@ -27,6 +27,7 @@ import { metaReducers } from './store/meta-reducers';
 import { ChatModule } from './modules/chat/chat.module';
 import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 import { GameModule } from './modules/game/game.module';
+import { roomReducer } from './store/reducers/room.reducer';
 
 const config: SocketIoConfig = { url: 'http://localhost:3333', options: {} };
 
@@ -45,6 +46,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3333', options: {} };
       {
         profile: profileReducer,
         router: routerReducer,
+        room: roomReducer,
       },
       {
         metaReducers,

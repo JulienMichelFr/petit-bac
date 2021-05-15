@@ -4,11 +4,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { PlayerInterface } from '@petit-bac/api-interfaces';
 import { AppStateInterface } from '../../interfaces/app-state.interface';
 import { Store } from '@ngrx/store';
-import { map, skipWhile, switchMap, take } from 'rxjs/operators';
+import { skipWhile, switchMap, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { hasProfile } from '../../store/selectors/profile.selectors';
-import { RoomUpdatePlayersMessage, WsMessagesName } from '@petit-bac/ws-shared';
+import { WsMessagesName } from '@petit-bac/ws-shared';
 import { SocketService } from '../../service/socket/socket.service';
+import { getRoom } from '../../store/actions/room.actions';
+import { selectRoomPlayers } from '../../store/selectors/room.selectors';
 
 @Component({
   selector: 'petit-bac-room-page',
@@ -17,9 +19,7 @@ import { SocketService } from '../../service/socket/socket.service';
 })
 export class RoomPageComponent implements OnInit {
   link: string;
-  players$: Observable<PlayerInterface[]> = this.socketService
-    .fromEvent<RoomUpdatePlayersMessage>(WsMessagesName.ROOM_UPDATE_PLAYERS)
-    .pipe(map((message) => message.players));
+  players$: Observable<PlayerInterface[]> = this.store.select(selectRoomPlayers);
   connected = false;
 
   constructor(
@@ -33,6 +33,7 @@ export class RoomPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.connectToRoom();
+    this.store.dispatch(getRoom());
   }
 
   copyLink() {

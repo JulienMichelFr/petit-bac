@@ -1,13 +1,13 @@
 <mat-progress-bar *ngIf="progress$ | async as progress" [value]="progress" color="primary" mode="determinate"></mat-progress-bar>
-<h2>{{ state | gameState }}</h2>
-<div [ngSwitch]="state">
+<h2>{{ roomStatus$ | async | gameState }}</h2>
+<div [ngSwitch]="roomStatus$ | async">
   <ng-container *ngSwitchCase="RoomStates.lobby">
     <button (click)="startGame()" color="primary" mat-raised-button>Start game</button>
   </ng-container>
   <ng-container *ngSwitchCase="RoomStates.started">
-    <petit-bac-game-inputs (sendResult)="sendResult($event)" [letter]="letter"></petit-bac-game-inputs>
+    <petit-bac-game-inputs (sendResult)="sendResult($event)" [letter]="currentLetter$ | async"></petit-bac-game-inputs>
   </ng-container>
   <ng-container *ngSwitchCase="RoomStates.ended">
-    <petit-bac-game-round-result [roundResult]="results[0]"></petit-bac-game-round-result>
+    <petit-bac-game-round-result [roundResult]="lastRoundResult$ | async"></petit-bac-game-round-result>
   </ng-container>
 </div>

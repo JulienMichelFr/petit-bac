@@ -1,7 +1,7 @@
 import { PlayerInterface } from './player.interface';
 import { GameRound } from './game-fields.interface';
 
-export enum RoomState {
+export enum RoomStatus {
   lobby,
   starting,
   started,
@@ -11,7 +11,7 @@ export enum RoomState {
 export interface RoomInterface {
   id: string;
   players: PlayerInterface[];
-  state: RoomState;
+  state: RoomStatus;
   rounds: GameRound[];
   currentLetter?: string;
 }

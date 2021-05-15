@@ -12,12 +12,12 @@ import {
   RoomUpdatePlayersMessage,
   WsMessagesName,
 } from '@petit-bac/ws-shared';
-import { PlayerInterface, RoomInterface, RoomState } from '@petit-bac/api-interfaces';
+import { PlayerInterface, RoomInterface, RoomStatus } from '@petit-bac/api-interfaces';
 import { Observable, of } from 'rxjs';
 import { delay, map, switchMap } from 'rxjs/operators';
 
-const GAME_START_DELAY = 10 * 1000;
-const GAME_DURATION = 60 * 1000;
+const GAME_START_DELAY = 3 * 1000;
+const GAME_DURATION = 30 * 1000;
 
 @WebSocketGateway()
 export class RoomGateway implements OnGatewayDisconnect {
@@ -35,8 +35,7 @@ export class RoomGateway implements OnGatewayDisconnect {
     room.players.push(client.data);
     const updated = this.roomService.updateRoom(room);
     client.join(roomId);
-    const response: RoomUpdatePlayersMessage = { players: updated.players };
-    this.server.to(roomId).emit(WsMessagesName.ROOM_UPDATE_PLAYERS, response);
+    this.sendToRoomUpdate(roomId, updated);
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_PLAYER_CHAT)
@@ -55,9 +54,8 @@ export class RoomGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage(WsMessagesName.ROOM_UPDATE_STATE)
   updateState(@MessageBody() { roomId }: RoomUpdateMessage): void {
-    const response: RoomUpdateMessage = { roomId, state: RoomState.starting, duration: GAME_START_DELAY };
-    this.roomService.updateRoom({ id: roomId, state: RoomState.starting });
-    this.server.to(roomId).emit(WsMessagesName.ROOM_UPDATE_STATE, response);
+    const updatedRoom = this.roomService.updateRoom({ id: roomId, state: RoomStatus.starting });
+    this.sendToRoomUpdate(roomId, updatedRoom);
 
     this.startRoom(roomId)
       .pipe(switchMap(() => this.endRoom(roomId)))
@@ -65,9 +63,9 @@ export class RoomGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_SEND_RESULT)
-  receiveResult(@MessageBody() { roomId, result, letter }: RoomSendResult, @ConnectedSocket() socket: Socket): void {
+  receiveResult(@MessageBody() { roomId, result }: RoomSendResult, @ConnectedSocket() socket: Socket): void {
     const player = socket.data;
-    this.roomService.addRoundForRoom(roomId, { letter, result, player });
+    this.roomService.addRoundForRoom(roomId, { result, player });
   }
 
   handleDisconnect(client: Socket): void {
@@ -85,13 +83,7 @@ export class RoomGateway implements OnGatewayDisconnect {
       delay(GAME_START_DELAY + 1000),
       map(() => {
         const room: RoomInterface = this.roomService.startRoundForRoom(roomId);
-        const message: RoomUpdateMessage = {
-          roomId,
-          state: room.state,
-          data: room.currentLetter,
-          duration: GAME_DURATION,
-        };
-        return this.sendToRoom(roomId, WsMessagesName.ROOM_UPDATE_STATE, message);
+        return this.sendToRoomUpdate(roomId, room);
       })
     );
   }
@@ -100,18 +92,18 @@ export class RoomGateway implements OnGatewayDisconnect {
     return of(null).pipe(
       delay(GAME_DURATION + 1000),
       map(() => {
-        const room: RoomInterface = this.roomService.updateRoom({ id: roomId, state: RoomState.ended });
-        return this.sendToRoom(roomId, WsMessagesName.ROOM_UPDATE_STATE, {
-          roomId,
-          state: RoomState.ended,
-          data: room.rounds,
-        });
+        const room: RoomInterface = this.roomService.updateRoom({ id: roomId, state: RoomStatus.ended });
+        return this.sendToRoomUpdate(roomId, room);
       })
     );
   }
 
-  private sendToRoom(roomId, type: WsMessagesName.ROOM_UPDATE_STATE, payload: RoomUpdateMessage): boolean;
-  private sendToRoom(roomId: string, type: WsMessagesName, payload?: RoomMessage): boolean {
+  private sendToRoomUpdate(roomId: string, updatedRoom: RoomInterface): boolean {
+    return this.sendToRoom(roomId, WsMessagesName.ROOM_UPDATE, updatedRoom);
+  }
+
+  private sendToRoom(roomId: string, type: WsMessagesName.ROOM_UPDATE, payload: RoomInterface): boolean;
+  private sendToRoom(roomId: string, type: WsMessagesName, payload?: unknown): boolean {
     return this.server.to(roomId).emit(type, payload);
   }
 }
