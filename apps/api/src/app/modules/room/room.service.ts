@@ -81,7 +81,12 @@ export class RoomService {
   addRoundForRoom(roomId: string, round: PlayerResultWithLetter): RoomInterface {
     const room = this.getRoom(roomId);
     const found = room.rounds.find(({ letter }) => round.letter === letter);
-    found.results.push({ player: round.player, result: round.result });
+    const resultForPlayer = found.results.find(({ player }) => player.username === round.player.username);
+    if (resultForPlayer) {
+      resultForPlayer.result = round.result;
+    } else {
+      found.results.push({ player: round.player, result: round.result });
+    }
     return this.updateRoom(room);
   }
 }
