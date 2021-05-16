@@ -1,6 +1,7 @@
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { PlayerUpdateMessage, WsMessagesName } from '@petit-bac/ws-shared';
+import { Socket } from 'socket.io';
 
 @WebSocketGateway()
 export class GeneralGateway {
@@ -11,7 +12,7 @@ export class GeneralGateway {
   }
 
   @SubscribeMessage(WsMessagesName.PLAYER_UPDATE)
-  playerUpdate(@MessageBody() { player }: PlayerUpdateMessage, @ConnectedSocket() client): void {
+  playerUpdate(@MessageBody() { player }: PlayerUpdateMessage, @ConnectedSocket() client: Socket): void {
     this.logger.log('Update player');
     client.data = player;
   }

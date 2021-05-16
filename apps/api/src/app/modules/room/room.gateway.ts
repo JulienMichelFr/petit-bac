@@ -15,6 +15,7 @@ import { Observable, of } from 'rxjs';
 import { delay, map, switchMap } from 'rxjs/operators';
 import { GAME_DURATION, GAME_START_DELAY } from '../../../environments/environment';
 import { Room } from './room.decorator';
+import { Player } from '../../general/player.decorator';
 
 @WebSocketGateway()
 export class RoomGateway implements OnGatewayDisconnect {
@@ -27,18 +28,18 @@ export class RoomGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_JOIN)
-  joinRoom(@ConnectedSocket() client: Socket, @Room() room: RoomInterface): void {
-    room.players.push(client.data);
+  joinRoom(@ConnectedSocket() client: Socket, @Room() room: RoomInterface, @Player() player: PlayerInterface): void {
+    room.players.push(player);
     const updated = this.roomService.updateRoom(room);
     client.join(room.id);
     this.sendToRoomUpdate(room.id, updated);
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_PLAYER_CHAT)
-  playerAction(@MessageBody() message: RoomPlayerChatMessage, @ConnectedSocket() socket: Socket): void {
+  playerAction(@MessageBody() message: RoomPlayerChatMessage, @Player() player: PlayerInterface): void {
     const response: RoomPlayerChatDispatchMessage = {
       message: message.message,
-      player: socket.data,
+      player,
     };
     this.server.to(message.roomId).emit(WsMessagesName.ROOM_PLAYER_CHAT, response);
   }
@@ -59,8 +60,7 @@ export class RoomGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_SEND_RESULT)
-  receiveResult(@MessageBody() { roomId, result }: RoomSendResult, @ConnectedSocket() socket: Socket): void {
-    const player = socket.data;
+  receiveResult(@MessageBody() { roomId, result }: RoomSendResult, @Player() player: PlayerInterface): void {
     this.roomService.addRoundForRoom(roomId, { result, player });
   }
 
