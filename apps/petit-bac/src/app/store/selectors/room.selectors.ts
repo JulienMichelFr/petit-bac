@@ -9,7 +9,7 @@ export const selectRoomPlayers = createSelector(selectRoom, (room) => {
 });
 
 export const selectRoomStatus = createSelector(selectRoom, (room) => {
-  return room?.state ?? null;
+  return room?.status ?? null;
 });
 
 export const selectRoomCurrentLetter = createSelector(selectRoom, (room) => {

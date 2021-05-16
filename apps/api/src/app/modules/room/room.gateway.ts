@@ -16,6 +16,7 @@ import { delay, map, switchMap } from 'rxjs/operators';
 import { GAME_DURATION, GAME_START_DELAY } from '../../../environments/environment';
 import { Room } from './room.decorator';
 import { Player } from '../../general/player.decorator';
+import { RoomModel } from '../../models/room.model';
 
 @WebSocketGateway()
 export class RoomGateway implements OnGatewayDisconnect {
@@ -28,15 +29,14 @@ export class RoomGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_JOIN)
-  joinRoom(@ConnectedSocket() client: Socket, @Room() room: RoomInterface, @Player() player: PlayerInterface): void {
-    room.players.push(player);
-    const updated = this.roomService.updateRoom(room);
+  joinRoom(@ConnectedSocket() client: Socket, @Room() room: RoomModel, @Player() player: PlayerInterface): void {
+    room.addPlayer(player);
     client.join(room.id);
-    this.sendToRoomUpdate(room.id, updated);
+    this.sendToRoomUpdate(room.id, room);
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_PLAYER_CHAT)
-  playerAction(@MessageBody() message: RoomPlayerChatMessage, @Player() player: PlayerInterface): void {
+  receiveChatMessage(@MessageBody() message: RoomPlayerChatMessage, @Player() player: PlayerInterface): void {
     const response: RoomPlayerChatDispatchMessage = {
       message: message.message,
       player,
@@ -51,7 +51,11 @@ export class RoomGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage(WsMessagesName.ROOM_UPDATE_STATE)
   updateState(@MessageBody() { roomId }: RoomUpdateMessage): void {
-    const updatedRoom = this.roomService.updateRoom({ id: roomId, state: RoomStatus.starting, statusDuration: GAME_START_DELAY });
+    const updatedRoom = this.roomService.updateRoom({
+      id: roomId,
+      status: RoomStatus.starting,
+      statusDuration: GAME_START_DELAY,
+    });
     this.sendToRoomUpdate(roomId, updatedRoom);
 
     this.startRoom(roomId)
@@ -60,8 +64,8 @@ export class RoomGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_SEND_RESULT)
-  receiveResult(@MessageBody() { roomId, result }: RoomSendResult, @Player() player: PlayerInterface): void {
-    this.roomService.addRoundForRoom(roomId, { result, player });
+  receiveResult(@MessageBody() { result }: RoomSendResult, @Player() player: PlayerInterface, @Room() room: RoomModel): void {
+    room.addRound({ result, player });
   }
 
   handleDisconnect(client: Socket): void {
@@ -88,7 +92,11 @@ export class RoomGateway implements OnGatewayDisconnect {
     return of(null).pipe(
       delay(GAME_DURATION + 1000),
       map(() => {
-        const room: RoomInterface = this.roomService.updateRoom({ id: roomId, state: RoomStatus.ended, statusDuration: 0 });
+        const room: RoomInterface = this.roomService.updateRoom({
+          id: roomId,
+          status: RoomStatus.ended,
+          statusDuration: 0,
+        });
         return this.sendToRoomUpdate(roomId, room);
       })
     );

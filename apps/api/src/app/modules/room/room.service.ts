@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomBytes } from 'crypto';
-import { PlayerInterface, PlayerResult, RoomInterface, RoomStatus } from '@petit-bac/api-interfaces';
+import { PlayerInterface, RoomInterface, RoomStatus } from '@petit-bac/api-interfaces';
 import { GAME_DURATION } from '../../../environments/environment';
+import { RoomModel } from '../../models/room.model';
 
 @Injectable()
 export class RoomService {
-  private rooms: Map<string, RoomInterface> = new Map<string, RoomInterface>();
+  private rooms: Map<string, RoomModel> = new Map<string, RoomModel>();
 
   private static createRoomId(): string {
     return randomBytes(20).toString('hex').toUpperCase().substring(0, 5);
@@ -21,7 +22,7 @@ export class RoomService {
     return this.rooms.has(roomId);
   }
 
-  getRoom(roomId: string): RoomInterface {
+  getRoom(roomId: string): RoomModel {
     const room = this.rooms.get(roomId);
     if (!room) {
       throw new NotFoundException(`Room with id ${roomId} not found`);
@@ -29,11 +30,9 @@ export class RoomService {
     return room;
   }
 
-  updateRoom(updateRoom: Partial<RoomInterface> & { id: string }): RoomInterface {
-    const room: RoomInterface = {
-      ...this.getRoom(updateRoom.id),
-      ...updateRoom,
-    };
+  updateRoom(updateRoom: Partial<RoomInterface> & { id: string }): RoomModel {
+    const room: RoomModel = this.getRoom(updateRoom.id);
+    room.patch(updateRoom);
     this.rooms.set(room.id, room);
     return room;
   }
@@ -42,8 +41,8 @@ export class RoomService {
     return this.rooms.delete(roomId);
   }
 
-  disconnectPlayer(player: PlayerInterface): RoomInterface[] {
-    const updatedRooms: RoomInterface[] = [];
+  disconnectPlayer(player: PlayerInterface): RoomModel[] {
+    const updatedRooms: RoomModel[] = [];
     for (const room of this.rooms.values()) {
       if (room.players.find((p) => p.username === player.username)) {
         room.players = room.players.filter((p) => p.username !== player.username);
@@ -54,14 +53,13 @@ export class RoomService {
     return updatedRooms;
   }
 
-  createRoom(): RoomInterface {
-    const roomId = RoomService.createRoomId();
-    const room: RoomInterface = { players: [], id: roomId, state: RoomStatus.lobby, rounds: [], statusDuration: 0, currentLetter: null };
-    this.rooms.set(roomId, room);
+  createRoom(): RoomModel {
+    const room: RoomModel = new RoomModel(this, { id: RoomService.createRoomId() });
+    this.rooms.set(room.id, room);
     return room;
   }
 
-  startRoundForRoom(roomId: string): RoomInterface {
+  startRoundForRoom(roomId: string): RoomModel {
     const room = this.getRoom(roomId);
     const letters: string[] = room.rounds.map(({ letter }) => letter);
     let newLetter: string = RoomService.generateRandomLetter();
@@ -74,21 +72,9 @@ export class RoomService {
       results: [],
     });
     room.currentLetter = newLetter;
-    room.state = RoomStatus.started;
+    room.status = RoomStatus.started;
     room.statusDuration = GAME_DURATION;
 
-    return this.updateRoom(room);
-  }
-
-  addRoundForRoom(roomId: string, round: PlayerResult): RoomInterface {
-    const room = this.getRoom(roomId);
-    const found = room.rounds.find(({ letter }) => room.currentLetter === letter);
-    const resultForPlayer = found.results.find(({ player }) => player.username === round.player.username);
-    if (resultForPlayer) {
-      resultForPlayer.result = round.result;
-    } else {
-      found.results.push({ player: round.player, result: round.result });
-    }
     return this.updateRoom(room);
   }
 }

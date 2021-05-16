@@ -11,7 +11,7 @@ export enum RoomStatus {
 export interface RoomInterface {
   id: string;
   players: PlayerInterface[];
-  state: RoomStatus;
+  status: RoomStatus;
   rounds: GameRound[];
   currentLetter: string;
   statusDuration: number;
