@@ -55,19 +55,8 @@ export class RoomModel implements RoomInterface {
     this.save();
   }
 
-  addPlayer(player: PlayerInterface) {
-    this.players.push(player);
-    this.save();
-  }
-
   private static delay(duration: number): Observable<undefined> {
     return of(undefined).pipe(delay(duration + 1000));
-  }
-
-  private static generateRandomLetter(): string {
-    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-
-    return alphabet[Math.floor(Math.random() * alphabet.length)];
   }
 
   runGame(): Observable<RoomModel> {
@@ -129,5 +118,19 @@ export class RoomModel implements RoomInterface {
       this.status = RoomStatus.END_GAME;
     }
     this.save();
+  }
+
+  private static generateRandomLetter(): string {
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+    return alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+
+  addPlayer(player: PlayerInterface) {
+    const players = this.players.map(({ username }) => username);
+    if (!players.includes(player.username)) {
+      this.players.push(player);
+      this.save();
+    }
   }
 }
