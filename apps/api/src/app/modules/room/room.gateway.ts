@@ -3,8 +3,6 @@ import { RoomService } from './room.service';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import {
-  RoomJoinMessage,
-  RoomMessage,
   RoomPlayerChatDispatchMessage,
   RoomPlayerChatMessage,
   RoomSendResult,
@@ -16,6 +14,7 @@ import { PlayerInterface, RoomInterface, RoomStatus } from '@petit-bac/api-inter
 import { Observable, of } from 'rxjs';
 import { delay, map, switchMap } from 'rxjs/operators';
 import { GAME_DURATION, GAME_START_DELAY } from '../../../environments/environment';
+import { Room } from './room.decorator';
 
 @WebSocketGateway()
 export class RoomGateway implements OnGatewayDisconnect {
@@ -28,12 +27,11 @@ export class RoomGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_JOIN)
-  joinRoom(@MessageBody() { roomId }: RoomJoinMessage, @ConnectedSocket() client: Socket): void {
-    const room = this.roomService.getRoom(roomId);
+  joinRoom(@ConnectedSocket() client: Socket, @Room() room: RoomInterface): void {
     room.players.push(client.data);
     const updated = this.roomService.updateRoom(room);
-    client.join(roomId);
-    this.sendToRoomUpdate(roomId, updated);
+    client.join(room.id);
+    this.sendToRoomUpdate(room.id, updated);
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_PLAYER_CHAT)
@@ -46,8 +44,8 @@ export class RoomGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_GET)
-  getState(@MessageBody() { roomId }: RoomMessage): RoomInterface {
-    return this.roomService.getRoom(roomId);
+  getState(@Room() room: RoomInterface): RoomInterface {
+    return room;
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_UPDATE_STATE)
