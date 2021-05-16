@@ -4,7 +4,7 @@ export enum WsMessagesName {
   ROOM_UPDATE = 'room:update',
   ROOM_UPDATE_PLAYERS = 'room:update-players',
   ROOM_PLAYER_CHAT = 'room:player-chat',
-  ROOM_START = 'room:start',
+  ROOM_START_ROUND = 'room:start-round',
   ROOM_SEND_RESULT = 'room:send-result',
   PLAYER_UPDATE = 'player:update',
 }

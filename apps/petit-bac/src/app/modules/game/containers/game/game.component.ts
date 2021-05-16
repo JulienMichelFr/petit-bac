@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { AppStateInterface } from '../../../../interfaces/app-state.interface';
 import {
   selectRoomCurrentLetter,
+  selectRoomHasStatusDuration,
   selectRoomRounds,
   selectRoomStatus,
   selectRoomStatusDuration,
@@ -26,6 +27,8 @@ export class GameComponent implements OnDestroy {
       return rounds[rounds.length - 1];
     })
   );
+  displayProgress$: Observable<boolean> = this.store.select(selectRoomHasStatusDuration);
+
   progress$: Observable<number> = this.store.select(selectRoomStatusDuration).pipe(
     distinctUntilChanged(),
     filter((duration) => duration > 0),
@@ -43,7 +46,7 @@ export class GameComponent implements OnDestroy {
   }
 
   startGame(): void {
-    this.socketService.sendRoomMessage(WsMessagesName.ROOM_START, { state: RoomStatus.starting }).subscribe();
+    this.socketService.sendRoomMessage(WsMessagesName.ROOM_START_ROUND, { state: RoomStatus.STARTING }).subscribe();
   }
 
   sendResult(result: GameFieldsInterface): void {
@@ -55,7 +58,7 @@ export class GameComponent implements OnDestroy {
       map((sec) => {
         return (sec * 10000) / duration;
       }),
-      takeWhile((progress) => progress < 100)
+      takeWhile((progress) => progress < 101)
     );
   }
 }

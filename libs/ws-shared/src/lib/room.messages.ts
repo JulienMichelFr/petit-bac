@@ -20,5 +20,5 @@ export interface RoomSendResult extends RoomMessage {
   result: GameFieldsInterface;
 }
 
-export type RoomStartMessage = RoomMessage;
+export type RoomStartRoundMessage = RoomMessage;
 export type RoomJoinMessage = RoomMessage;

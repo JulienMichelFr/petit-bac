@@ -2,10 +2,11 @@ import { PlayerInterface } from './player.interface';
 import { GameRound } from './game-fields.interface';
 
 export enum RoomStatus {
-  lobby,
-  starting,
-  started,
-  ended,
+  LOBBY,
+  STARTING,
+  IN_ROUND,
+  END_ROUND,
+  END_GAME,
 }
 
 export interface RoomInterface {
@@ -15,4 +16,5 @@ export interface RoomInterface {
   rounds: GameRound[];
   currentLetter: string;
   statusDuration: number;
+  roundLeft: number;
 }

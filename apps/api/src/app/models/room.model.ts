@@ -9,8 +9,9 @@ export class RoomModel implements RoomInterface {
   id: string = null;
   players: PlayerInterface[] = [];
   rounds: GameRound[] = [];
-  status: RoomStatus = RoomStatus.lobby;
+  status: RoomStatus = RoomStatus.LOBBY;
   statusDuration = 0;
+  roundLeft = 4;
 
   constructor(private roomService: RoomService, data?: Partial<RoomInterface>) {
     if (data) {
@@ -19,7 +20,7 @@ export class RoomModel implements RoomInterface {
   }
 
   patch(data: Partial<RoomInterface>) {
-    const keys = ['statusDuration', 'currentLetter', 'id', 'players', 'rounds', 'status'];
+    const keys = ['statusDuration', 'currentLetter', 'id', 'players', 'rounds', 'status', 'roundLeft'];
     for (const key of Object.keys(data)) {
       if (keys.includes(key)) {
         this[key] = data[key];
@@ -35,6 +36,7 @@ export class RoomModel implements RoomInterface {
       rounds: this.rounds,
       status: this.status,
       statusDuration: this.statusDuration,
+      roundLeft: this.roundLeft,
     };
   }
 
@@ -88,12 +90,18 @@ export class RoomModel implements RoomInterface {
   }
 
   startGame(): void {
-    this.status = RoomStatus.starting;
+    if (![RoomStatus.LOBBY, RoomStatus.END_ROUND].includes(this.status) || this.roundLeft <= 0) {
+      return;
+    }
+    this.status = RoomStatus.STARTING;
     this.statusDuration = GAME_START_DELAY;
     this.save();
   }
 
   startRound(): void {
+    if (this.status !== RoomStatus.STARTING) {
+      return;
+    }
     const letters: string[] = this.rounds.map(({ letter }) => letter);
     let newLetter: string = RoomModel.generateRandomLetter();
     while (letters.includes(newLetter)) {
@@ -105,14 +113,21 @@ export class RoomModel implements RoomInterface {
       results: [],
     });
     this.currentLetter = newLetter;
-    this.status = RoomStatus.started;
+    this.status = RoomStatus.IN_ROUND;
     this.statusDuration = GAME_DURATION;
     this.save();
   }
 
   endRound(): void {
-    this.status = RoomStatus.ended;
+    if (this.status !== RoomStatus.IN_ROUND) {
+      return;
+    }
+    this.status = RoomStatus.END_ROUND;
     this.statusDuration = 0;
+    this.roundLeft -= 1;
+    if (this.roundLeft <= 0) {
+      this.status = RoomStatus.END_GAME;
+    }
     this.save();
   }
 }

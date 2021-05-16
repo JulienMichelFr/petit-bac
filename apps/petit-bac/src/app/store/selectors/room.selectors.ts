@@ -23,3 +23,11 @@ export const selectRoomRounds = createSelector(selectRoom, (room) => {
 export const selectRoomStatusDuration = createSelector(selectRoom, (room) => {
   return room?.statusDuration ?? 0;
 });
+
+export const selectRoomHasStatusDuration = createSelector(selectRoom, (room) => {
+  return room?.statusDuration > 0;
+});
+
+export const selectRoomHasRoundLeft = createSelector(selectRoom, (room) => {
+  return room?.roundLeft ?? 0;
+});

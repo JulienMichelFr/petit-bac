@@ -45,7 +45,7 @@ export class RoomGateway implements OnGatewayDisconnect {
     return room;
   }
 
-  @SubscribeMessage(WsMessagesName.ROOM_START)
+  @SubscribeMessage(WsMessagesName.ROOM_START_ROUND)
   updateState(@Room() room: RoomModel): void {
     room.runGame().subscribe((roomResult) => {
       this.sendToRoomUpdate(roomResult.id, roomResult);
