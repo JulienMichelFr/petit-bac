@@ -43,7 +43,7 @@ export class GameComponent implements OnDestroy {
   }
 
   startGame(): void {
-    this.socketService.sendRoomMessage(WsMessagesName.ROOM_UPDATE_STATE, { state: RoomStatus.starting }).subscribe();
+    this.socketService.sendRoomMessage(WsMessagesName.ROOM_START, { state: RoomStatus.starting }).subscribe();
   }
 
   sendResult(result: GameFieldsInterface): void {

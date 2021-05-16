@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomBytes } from 'crypto';
-import { PlayerInterface, RoomInterface, RoomStatus } from '@petit-bac/api-interfaces';
-import { GAME_DURATION } from '../../../environments/environment';
+import { PlayerInterface, RoomInterface } from '@petit-bac/api-interfaces';
 import { RoomModel } from '../../models/room.model';
 
 @Injectable()
@@ -10,12 +9,6 @@ export class RoomService {
 
   private static createRoomId(): string {
     return randomBytes(20).toString('hex').toUpperCase().substring(0, 5);
-  }
-
-  private static generateRandomLetter(): string {
-    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-
-    return alphabet[Math.floor(Math.random() * alphabet.length)];
   }
 
   roomExist(roomId: string): boolean {
@@ -61,20 +54,7 @@ export class RoomService {
 
   startRoundForRoom(roomId: string): RoomModel {
     const room = this.getRoom(roomId);
-    const letters: string[] = room.rounds.map(({ letter }) => letter);
-    let newLetter: string = RoomService.generateRandomLetter();
-    while (letters.includes(newLetter)) {
-      newLetter = RoomService.generateRandomLetter();
-    }
-
-    room.rounds.push({
-      letter: newLetter,
-      results: [],
-    });
-    room.currentLetter = newLetter;
-    room.status = RoomStatus.started;
-    room.statusDuration = GAME_DURATION;
-
-    return this.updateRoom(room);
+    room.startRound();
+    return room;
   }
 }

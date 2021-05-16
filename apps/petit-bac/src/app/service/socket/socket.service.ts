@@ -10,7 +10,7 @@ import {
   RoomMessage,
   RoomPlayerChatMessage,
   RoomSendResult,
-  RoomUpdateMessage,
+  RoomStartMessage,
   WsMessagesName,
 } from '@petit-bac/ws-shared';
 import { skipWhile, switchMap, take } from 'rxjs/operators';
@@ -47,7 +47,7 @@ export class SocketService {
 
   sendRoomMessage(type: WsMessagesName.ROOM_GET): Observable<RoomInterface>;
   sendRoomMessage(type: WsMessagesName.ROOM_SEND_RESULT, payload: WithoutRoomId<RoomSendResult>): Observable<void>;
-  sendRoomMessage(type: WsMessagesName.ROOM_UPDATE_STATE, payload: WithoutRoomId<RoomUpdateMessage>): Observable<void>;
+  sendRoomMessage(type: WsMessagesName.ROOM_START, payload: WithoutRoomId<RoomStartMessage>): Observable<void>;
   sendRoomMessage(type: WsMessagesName.ROOM_JOIN, payload: WithoutRoomId<RoomJoinMessage>): Observable<void>;
   sendRoomMessage(type: WsMessagesName.ROOM_PLAYER_CHAT, payload: WithoutRoomId<RoomPlayerChatMessage>): Observable<void>;
   sendRoomMessage<T>(type: WsMessagesName, payload: WithoutRoomId<RoomMessage> = {}): Observable<T> {

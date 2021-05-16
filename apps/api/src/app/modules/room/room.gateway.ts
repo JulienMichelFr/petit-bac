@@ -6,14 +6,10 @@ import {
   RoomPlayerChatDispatchMessage,
   RoomPlayerChatMessage,
   RoomSendResult,
-  RoomUpdateMessage,
   RoomUpdatePlayersMessage,
   WsMessagesName,
 } from '@petit-bac/ws-shared';
-import { PlayerInterface, RoomInterface, RoomStatus } from '@petit-bac/api-interfaces';
-import { Observable, of } from 'rxjs';
-import { delay, map, switchMap } from 'rxjs/operators';
-import { GAME_DURATION, GAME_START_DELAY } from '../../../environments/environment';
+import { PlayerInterface, RoomInterface } from '@petit-bac/api-interfaces';
 import { Room } from './room.decorator';
 import { Player } from '../../general/player.decorator';
 import { RoomModel } from '../../models/room.model';
@@ -49,18 +45,11 @@ export class RoomGateway implements OnGatewayDisconnect {
     return room;
   }
 
-  @SubscribeMessage(WsMessagesName.ROOM_UPDATE_STATE)
-  updateState(@MessageBody() { roomId }: RoomUpdateMessage): void {
-    const updatedRoom = this.roomService.updateRoom({
-      id: roomId,
-      status: RoomStatus.starting,
-      statusDuration: GAME_START_DELAY,
+  @SubscribeMessage(WsMessagesName.ROOM_START)
+  updateState(@Room() room: RoomModel): void {
+    room.runGame().subscribe((roomResult) => {
+      this.sendToRoomUpdate(roomResult.id, roomResult);
     });
-    this.sendToRoomUpdate(roomId, updatedRoom);
-
-    this.startRoom(roomId)
-      .pipe(switchMap(() => this.endRoom(roomId)))
-      .subscribe();
   }
 
   @SubscribeMessage(WsMessagesName.ROOM_SEND_RESULT)
@@ -78,36 +67,7 @@ export class RoomGateway implements OnGatewayDisconnect {
     this.logger.log(`Player ${(<PlayerInterface>client.data)?.username} disconnected`);
   }
 
-  private startRoom(roomId: string): Observable<boolean> {
-    return of(null).pipe(
-      delay(GAME_START_DELAY + 1000),
-      map(() => {
-        const room: RoomInterface = this.roomService.startRoundForRoom(roomId);
-        return this.sendToRoomUpdate(roomId, room);
-      })
-    );
-  }
-
-  private endRoom(roomId): Observable<boolean> {
-    return of(null).pipe(
-      delay(GAME_DURATION + 1000),
-      map(() => {
-        const room: RoomInterface = this.roomService.updateRoom({
-          id: roomId,
-          status: RoomStatus.ended,
-          statusDuration: 0,
-        });
-        return this.sendToRoomUpdate(roomId, room);
-      })
-    );
-  }
-
   private sendToRoomUpdate(roomId: string, updatedRoom: RoomInterface): boolean {
-    return this.sendToRoom(roomId, WsMessagesName.ROOM_UPDATE, updatedRoom);
-  }
-
-  private sendToRoom(roomId: string, type: WsMessagesName.ROOM_UPDATE, payload: RoomInterface): boolean;
-  private sendToRoom(roomId: string, type: WsMessagesName, payload?: unknown): boolean {
-    return this.server.to(roomId).emit(type, payload);
+    return this.server.to(roomId).emit(WsMessagesName.ROOM_UPDATE, updatedRoom);
   }
 }

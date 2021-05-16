@@ -1,5 +1,8 @@
 import { GameRound, PlayerInterface, PlayerResult, RoomInterface, RoomStatus } from '@petit-bac/api-interfaces';
 import { RoomService } from '../modules/room/room.service';
+import { GAME_DURATION, GAME_START_DELAY } from '../../environments/environment';
+import { concat, Observable, of } from 'rxjs';
+import { delay, map } from 'rxjs/operators';
 
 export class RoomModel implements RoomInterface {
   currentLetter: string = null;
@@ -52,6 +55,64 @@ export class RoomModel implements RoomInterface {
 
   addPlayer(player: PlayerInterface) {
     this.players.push(player);
+    this.save();
+  }
+
+  private static delay(duration: number): Observable<undefined> {
+    return of(undefined).pipe(delay(duration + 1000));
+  }
+
+  private static generateRandomLetter(): string {
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+    return alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+
+  runGame(): Observable<RoomModel> {
+    this.startGame();
+    return concat(
+      of<RoomModel>(this),
+      RoomModel.delay(GAME_START_DELAY).pipe(
+        map<number, RoomModel>(() => {
+          this.startRound();
+          return this;
+        })
+      ),
+      RoomModel.delay(GAME_DURATION).pipe(
+        map<number, RoomModel>(() => {
+          this.endRound();
+          return this;
+        })
+      )
+    );
+  }
+
+  startGame(): void {
+    this.status = RoomStatus.starting;
+    this.statusDuration = GAME_START_DELAY;
+    this.save();
+  }
+
+  startRound(): void {
+    const letters: string[] = this.rounds.map(({ letter }) => letter);
+    let newLetter: string = RoomModel.generateRandomLetter();
+    while (letters.includes(newLetter)) {
+      newLetter = RoomModel.generateRandomLetter();
+    }
+
+    this.rounds.push({
+      letter: newLetter,
+      results: [],
+    });
+    this.currentLetter = newLetter;
+    this.status = RoomStatus.started;
+    this.statusDuration = GAME_DURATION;
+    this.save();
+  }
+
+  endRound(): void {
+    this.status = RoomStatus.ended;
+    this.statusDuration = 0;
     this.save();
   }
 }
